@@ -53,6 +53,18 @@ const getDefaultResponse = (age: string): string => {
   return defaults[age as keyof typeof defaults] || defaults.adult;
 };
 
+const getWelcomeMessage = (age: string): string => {
+  const welcomes = {
+    child: "Hi there! I'm your friendly AI helper, and I'm so excited to talk with you today! What's been the best part of your day so far?",
+    teen: "Hey! I'm here to listen and support you through whatever's on your mind. What's been going on with you lately?",
+    'young-adult': "Hello! I'm here to create a safe space where you can share anything that's on your mind. What would you like to talk about today?",
+    adult: "Welcome! I'm here to listen and support you through whatever you're experiencing. What's been weighing on your mind recently?",
+    senior: "Good day! I'm honored to spend this time with you. What would you like to share or explore together today?"
+  };
+  
+  return welcomes[age as keyof typeof welcomes] || welcomes.adult;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -65,8 +77,11 @@ serve(async (req) => {
       isWelcome?: boolean;
     };
 
+    console.log('Received request:', { userMessage, context, isWelcome });
+
     const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
     if (!apiKey) {
+      console.error('Google AI API key not configured');
       throw new Error('Google AI API key not configured');
     }
 
@@ -99,6 +114,8 @@ Provide an empathetic, conversational response that prioritizes understanding an
 - Focus on creating a safe space for them to open up and be heard
 Keep it concise per the age guidance, avoid being prescriptive, and do not mention being an AI. Use at most 2 sentences.`;
     }
+
+    console.log('Making Gemini API request...');
 
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
       method: 'POST',
@@ -138,16 +155,33 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
       }),
     });
 
+    console.log('Gemini API response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`Gemini API error: ${response.status} - ${errorText}`);
+      
+      // Return fallback based on request type
+      const fallbackResponse = isWelcome ? getWelcomeMessage(context.age) : getDefaultResponse(context.age);
+      return new Response(JSON.stringify({ response: fallbackResponse }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
+    console.log('Gemini API response data:', data);
+    
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!generatedText) {
-      throw new Error('No response generated from Gemini API');
+      console.error('No response generated from Gemini API');
+      const fallbackResponse = isWelcome ? getWelcomeMessage(context.age) : getDefaultResponse(context.age);
+      return new Response(JSON.stringify({ response: fallbackResponse }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
+
+    console.log('Generated response:', generatedText);
 
     return new Response(JSON.stringify({ response: generatedText }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -156,11 +190,18 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
     console.error('Error in generate-therapy-response function:', error);
     
     // Return appropriate fallback response based on context
-    const { context } = await req.json().catch(() => ({ context: { age: 'adult' } }));
-    const fallbackResponse = getDefaultResponse(context?.age || 'adult');
-    
-    return new Response(JSON.stringify({ response: fallbackResponse }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    try {
+      const { context, isWelcome } = await req.json();
+      const fallbackResponse = isWelcome ? getWelcomeMessage(context?.age || 'adult') : getDefaultResponse(context?.age || 'adult');
+      
+      return new Response(JSON.stringify({ response: fallbackResponse }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch {
+      // Final fallback if we can't parse the request
+      return new Response(JSON.stringify({ response: "I'm here to listen and support you. How are you feeling today?" }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
   }
 });
