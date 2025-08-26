@@ -117,49 +117,36 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
 
     console.log('Making Gemini API request with prompt length:', fullPrompt.length);
 
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
+    const requestBody = {
+      contents: [{
+        parts: [{
+          text: fullPrompt
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.8,
+        maxOutputTokens: 100,
+      }
+    };
+
+    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: fullPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.9,
-          maxOutputTokens: 150,
-        },
-        safetySettings: [
-          {
-            category: 'HARM_CATEGORY_HARASSMENT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_HATE_SPEECH',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          }
-        ]
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     console.log('Gemini API response status:', response.status);
+    console.log('Response headers:', JSON.stringify([...response.headers.entries()]));
+
+    const responseText = await response.text();
+    console.log('Raw response:', responseText);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Gemini API error: ${response.status} - ${errorText}`);
+      console.error(`Gemini API error: ${response.status} - ${responseText}`);
       
       // Return fallback based on request type
       const fallbackResponse = isWelcome ? getWelcomeMessage(context.age) : getDefaultResponse(context.age);
@@ -168,8 +155,16 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
       });
     }
 
-    const data = await response.json();
-    console.log('Gemini API response data:', data);
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse response JSON:', parseError);
+      const fallbackResponse = isWelcome ? getWelcomeMessage(context.age) : getDefaultResponse(context.age);
+      return new Response(JSON.stringify({ response: fallbackResponse }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
