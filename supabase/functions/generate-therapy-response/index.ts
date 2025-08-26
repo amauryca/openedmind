@@ -128,16 +128,19 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
         temperature: 0.8,
         maxOutputTokens: 150,
         topK: 40,
-        topP: 0.9
+        topP: 0.9,
+        candidateCount: 1
       }
     };
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`, {
+    // Updated API endpoint and headers based on new Gemini API approach
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
       },
       body: JSON.stringify(requestBody),
     });
