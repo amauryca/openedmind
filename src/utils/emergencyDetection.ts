@@ -1,0 +1,61 @@
+// Simplified and strict emergency detection for explicit self-harm phrases only
+// Triggers ONLY on clear statements similar to "killing myself" to avoid false positives
+
+const EXPLICIT_SELF_HARM_PHRASES = [
+  'kill myself',
+  'killing myself',
+  'end my life',
+  'take my life',
+  'commit suicide',
+  'suicide',
+  'want to die',
+  "i want to die",
+  "i'm going to kill myself",
+  'hurt myself',
+  'harm myself',
+  'self harm',
+  'self-harm',
+  'end it all',
+  'ending it all',
+  'not worth living',
+  'better off dead',
+  'can\'t go on',
+  'done with life',
+  'give up on life',
+  'no point living',
+  'no reason to live',
+  'life is hopeless',
+  'want it to end',
+  'planning to die',
+  'thinking of dying',
+  'ready to die',
+  'wish i was dead',
+  'wish i were dead',
+  'nothing to live for',
+  'life isn\'t worth it',
+  'overdose',
+  'cut myself',
+  'cutting myself',
+  'slash my wrists',
+  'jump off',
+  'hanging myself',
+  'suffocate myself',
+  'poison myself',
+  'shoot myself',
+  'drown myself',
+  'worthless life',
+  'hate my life',
+  'life is meaningless',
+  'can\'t take it anymore',
+  'too much pain',
+  'rather be dead',
+  'escape this pain'
+];
+
+export const detectEmergency = (text: string): boolean => {
+  const lower = text.toLowerCase();
+  return EXPLICIT_SELF_HARM_PHRASES.some((p) => lower.includes(p));
+};
+
+export const emergencyResponseMessage =
+  "I'm very concerned about what you've shared. Your safety and well-being are the most important things right now. Please know that you're not alone and there are people who want to help you through this difficult time.";
