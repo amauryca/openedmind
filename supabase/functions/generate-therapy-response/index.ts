@@ -79,10 +79,10 @@ serve(async (req) => {
 
     console.log('Received request:', { userMessage, context, isWelcome });
 
-    const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
+    const apiKey = Deno.env.get('GEMINI_API_KEY');
     if (!apiKey) {
-      console.error('Google AI API key not configured');
-      throw new Error('Google AI API key not configured');
+      console.error('Gemini API key not configured');
+      throw new Error('Gemini API key not configured');
     }
 
     const systemPrompt = getAgeAppropriatePrompt(context.age);
@@ -115,23 +115,26 @@ Provide an empathetic, conversational response that prioritizes understanding an
 Keep it concise per the age guidance, avoid being prescriptive, and do not mention being an AI. Use at most 2 sentences.`;
     }
 
-    console.log('Making Gemini API request with prompt length:', fullPrompt.length);
+    console.log('Making Gemini 2.0 Flash Lite API request with prompt length:', fullPrompt.length);
 
     const requestBody = {
       contents: [{
+        role: "user",
         parts: [{
           text: fullPrompt
         }]
       }],
       generationConfig: {
         temperature: 0.8,
-        maxOutputTokens: 100,
+        maxOutputTokens: 150,
+        topK: 40,
+        topP: 0.9
       }
     };
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
