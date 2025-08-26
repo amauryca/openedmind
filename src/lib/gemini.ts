@@ -38,7 +38,8 @@ const getMoodContext = (mood?: string, emotion?: string) => {
 
 export const generateTherapyResponse = async (
   userMessage: string,
-  context: TherapyContext
+  context: TherapyContext,
+  retryCount = 0
 ): Promise<string> => {
   const start = performance.now?.() ?? Date.now();
   try {
@@ -50,26 +51,51 @@ export const generateTherapyResponse = async (
 
     const sanitizedMessage = securityManager.sanitizeInput(userMessage);
 
-    // Call Supabase edge function
-    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
-      body: {
-        userMessage: sanitizedMessage,
-        context: context
-      }
-    });
+    // Call Supabase edge function with timeout
+    const { data, error } = await Promise.race([
+      supabase.functions.invoke('generate-therapy-response', {
+        body: {
+          userMessage: sanitizedMessage,
+          context: context
+        }
+      }),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 15000)
+      )
+    ]) as any;
 
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
 
     if (error) {
+      console.error('Supabase function error:', error);
       window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error.message } }));
+      
+      // Retry once if it's a network or timeout error
+      if (retryCount < 1 && (error.message?.includes('timeout') || error.message?.includes('network'))) {
+        console.log('Retrying therapy response generation...');
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        return generateTherapyResponse(userMessage, context, retryCount + 1);
+      }
+      
       throw new Error(error.message);
+    }
+
+    if (!data?.response) {
+      throw new Error('No response data received');
     }
 
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
     return data.response;
   } catch (error) {
-    // Don't log sensitive user data
     console.error('Error generating therapy response:', error instanceof Error ? error.message : 'Unknown error');
+    
+    // Retry once for any error if we haven't retried yet
+    if (retryCount < 1) {
+      console.log('Retrying therapy response generation due to error...');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+      return generateTherapyResponse(userMessage, context, retryCount + 1);
+    }
+    
     return getDefaultResponse(context.age);
   }
 };

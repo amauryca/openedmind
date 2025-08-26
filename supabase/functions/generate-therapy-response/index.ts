@@ -115,7 +115,7 @@ Provide an empathetic, conversational response that prioritizes understanding an
 Keep it concise per the age guidance, avoid being prescriptive, and do not mention being an AI. Use at most 2 sentences.`;
     }
 
-    console.log('Making Gemini API request...');
+    console.log('Making Gemini API request with prompt length:', fullPrompt.length);
 
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
       method: 'POST',
