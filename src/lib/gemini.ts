@@ -51,18 +51,13 @@ export const generateTherapyResponse = async (
 
     const sanitizedMessage = securityManager.sanitizeInput(userMessage);
 
-    // Call Supabase edge function with timeout
-    const { data, error } = await Promise.race([
-      supabase.functions.invoke('generate-therapy-response', {
-        body: {
-          userMessage: sanitizedMessage,
-          context: context
-        }
-      }),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 15000)
-      )
-    ]) as any;
+    // Call Supabase edge function
+    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
+      body: {
+        userMessage: sanitizedMessage,
+        context: context
+      }
+    });
 
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
 
