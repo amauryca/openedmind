@@ -112,11 +112,29 @@ Keep it concise per the age guidance, avoid being prescriptive, and do not menti
           }]
         }],
         generationConfig: {
-          temperature: 0.5,
+          temperature: 0.7,
           topK: 40,
-          topP: 0.8,
-          maxOutputTokens: 256,
-        }
+          topP: 0.9,
+          maxOutputTokens: 150,
+        },
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          }
+        ]
       }),
     });
 
