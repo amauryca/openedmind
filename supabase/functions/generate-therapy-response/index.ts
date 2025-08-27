@@ -64,13 +64,7 @@ serve(async (req) => {
     const apiKey = Deno.env.get('GEMINI_API_KEY');
     if (!apiKey) {
       console.error('❌ GEMINI_API_KEY not found in environment');
-      return new Response(JSON.stringify({ 
-        error: 'API key not configured',
-        response: 'I apologize, but I am not properly configured. Please check the API key setup.'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error('API key not configured');
     }
 
     console.log('✅ API Key found, length:', apiKey.length);
@@ -113,15 +107,7 @@ serve(async (req) => {
     if (!geminiResponse.ok) {
       console.error('❌ Gemini API Error - Status:', geminiResponse.status);
       console.error('❌ Gemini API Error - Response:', responseText);
-      
-      return new Response(JSON.stringify({ 
-        error: `Gemini API error: ${geminiResponse.status}`,
-        details: responseText,
-        response: 'I am having trouble connecting right now. Please try again in a moment.'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error(`Gemini API error: ${geminiResponse.status} - ${responseText}`);
     }
 
     let responseData;
@@ -130,13 +116,7 @@ serve(async (req) => {
       console.log('✅ Parsed response data:', JSON.stringify(responseData, null, 2));
     } catch (parseError) {
       console.error('❌ Failed to parse JSON response:', parseError);
-      return new Response(JSON.stringify({ 
-        error: 'Invalid response format',
-        response: 'I received an unexpected response. Please try again.'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error(`Invalid response format: ${parseError.message}`);
     }
 
     const generatedText = responseData?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -144,14 +124,7 @@ serve(async (req) => {
     if (!generatedText) {
       console.error('❌ No text found in response structure');
       console.error('Response structure:', JSON.stringify(responseData, null, 2));
-      
-      return new Response(JSON.stringify({ 
-        error: 'No response text generated',
-        response: 'I am having trouble generating a response right now. Please try again.'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error('No response text generated');
     }
 
     console.log('✅ SUCCESS - Generated text:', generatedText);
@@ -164,8 +137,7 @@ serve(async (req) => {
     console.error('❌ FATAL ERROR in function:', error);
     
     return new Response(JSON.stringify({ 
-      error: error.message,
-      response: 'I encountered an unexpected error. Please try again.'
+      error: error.message
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
