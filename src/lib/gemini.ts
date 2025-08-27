@@ -91,7 +91,7 @@ export const generateTherapyResponse = async (
       return generateTherapyResponse(userMessage, context, retryCount + 1);
     }
     
-    return getDefaultResponse(context.age);
+    throw new Error('Failed to generate therapy response after retries');
   }
 };
 
