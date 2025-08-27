@@ -41,17 +41,7 @@ const getMoodContext = (mood?: string, emotion?: string) => {
   return context;
 };
 
-const getDefaultResponse = (age: string): string => {
-  const defaults = {
-    child: "I hear you, and I want you to know that what you're feeling is okay. Can you tell me more about what's happening?",
-    teen: "Thanks for sharing that with me. It sounds like you're dealing with something important. What's been the hardest part about this situation?",
-    'young-adult': "I appreciate you opening up about this. It takes courage to talk about difficult things. How has this been affecting you day to day?",
-    adult: "Thank you for sharing that with me. I can hear that this is significant for you. What would be most helpful to explore together right now?",
-    senior: "I value you sharing your thoughts with me. Your perspective and experience are important. How would you like to approach working through this together?"
-  };
-  
-  return defaults[age as keyof typeof defaults] || defaults.adult;
-};
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
