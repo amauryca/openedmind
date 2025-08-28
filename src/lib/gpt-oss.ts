@@ -15,36 +15,47 @@ let gptOssGenerator: any = null;
 const initializeGPTOSS = async () => {
   if (!gptOssGenerator) {
     try {
-      console.log('Initializing GPT-OSS model...');
+      console.log('Initializing conversation model...');
+      // Use a supported model for now until GPT-OSS is available in transformers.js
       gptOssGenerator = await pipeline(
         "text-generation",
-        "openai/gpt-oss-20b",
+        "microsoft/DialoGPT-medium",
         { 
           device: "webgpu",
           dtype: "fp16"
         }
       );
-      console.log('GPT-OSS initialized with WebGPU');
+      console.log('Conversation model initialized with WebGPU');
     } catch (error) {
       console.warn("WebGPU not available, falling back to CPU");
       try {
         gptOssGenerator = await pipeline(
           "text-generation",
-          "openai/gpt-oss-20b",
+          "microsoft/DialoGPT-medium",
           { device: "cpu" }
         );
-        console.log('GPT-OSS initialized with CPU');
+        console.log('Conversation model initialized with CPU');
       } catch (cpuError) {
-        console.error('Failed to initialize GPT-OSS:', cpuError);
-        throw new Error('Unable to initialize GPT-OSS model');
+        console.warn('DialoGPT-medium failed, trying GPT-2 fallback:', cpuError);
+        try {
+          gptOssGenerator = await pipeline(
+            "text-generation",
+            "gpt2",
+            { device: "cpu" }
+          );
+          console.log('GPT-2 fallback model initialized');
+        } catch (finalError) {
+          console.error('All models failed to initialize:', finalError);
+          throw new Error('Unable to initialize any conversation model');
+        }
       }
     }
   }
   return gptOssGenerator;
 };
 
-// Create system prompt for GPT-OSS with reasoning level
-const createSystemPrompt = (context: TherapyContext): string => {
+// Create therapy prompt for conversation model
+const createTherapyPrompt = (context: TherapyContext, userMessage: string): string => {
   const systemInstructions = {
     'child': 'You are a gentle, caring therapist for children ages 5-12. Use simple, warm language. Be encouraging and patient. Keep responses short and easy to understand.',
     'teen': 'You are an understanding therapist for teenagers ages 13-17. Be relatable and non-judgmental. Acknowledge their unique challenges without being preachy.',
@@ -61,21 +72,18 @@ const createSystemPrompt = (context: TherapyContext): string => {
     emotionalContext = `\n\nThe client appears to be feeling ${context.mood || 'unknown'} and their emotional state seems ${context.emotion || 'neutral'}. Please acknowledge these feelings appropriately.`;
   }
 
-  // Set reasoning level for therapy context
-  let reasoningLevel = 'Reasoning: medium';
-  if (context.sessionType === 'realtime') {
-    reasoningLevel = 'Reasoning: low'; // Faster responses for real-time
-  }
+  // Create a conversational prompt
+  return `${systemRole}${emotionalContext}
 
-  return `${reasoningLevel}
+You are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.
 
-${systemRole}${emotionalContext}
+Client: ${userMessage}
 
-You are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.`;
+Therapist:`;
 };
 
-// Create welcome message for GPT-OSS using messages format
-const createWelcomeMessages = (age: string) => {
+// Create welcome message prompt
+const createWelcomePrompt = (age: string): string => {
   const welcomeInstructions = {
     'child': 'Create a warm, simple welcome message for a child starting therapy. Make them feel safe and comfortable.',
     'teen': 'Create a genuine welcome message for a teenager. Avoid being patronizing and acknowledge their maturity.',
@@ -86,16 +94,11 @@ const createWelcomeMessages = (age: string) => {
 
   const instruction = welcomeInstructions[age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
 
-  return [
-    {
-      role: "system",
-      content: `Reasoning: low\n\nYou are a professional therapist meeting a new client for the first time. ${instruction}`
-    },
-    {
-      role: "user",
-      content: "Hi, I'm here for my first therapy session."
-    }
-  ];
+  return `You are a professional therapist meeting a new client for the first time. ${instruction}
+
+Client: Hi, I'm here for my first therapy session.
+
+Therapist:`;
 };
 
 export const generateTherapyResponse = async (
@@ -114,72 +117,62 @@ export const generateTherapyResponse = async (
 
     const sanitizedMessage = securityManager.sanitizeInput(userMessage);
 
-    console.log('Generating therapy response with GPT-OSS:', { 
+    console.log('Generating therapy response with conversation model:', { 
       age: context.age, 
       sessionType: context.sessionType,
       messageLength: sanitizedMessage.length 
     });
 
-    // Initialize GPT-OSS if needed
+    // Initialize conversation model if needed
     const generator = await initializeGPTOSS();
     
-    // Create messages array for harmony format (transformers handles the format automatically)
-    const messages = [
-      {
-        role: "system",
-        content: createSystemPrompt(context)
-      },
-      {
-        role: "user", 
-        content: sanitizedMessage
-      }
-    ];
+    // Create therapy-focused prompt
+    const prompt = createTherapyPrompt(context, sanitizedMessage);
     
-    console.log('Using messages with harmony format');
+    console.log('Using prompt:', prompt.substring(0, 200) + '...');
 
-    // Generate response using chat template (automatically applies harmony format)
-    const result = await generator(messages, {
+    // Generate response with therapy-optimized parameters
+    const result = await generator(prompt, {
       max_new_tokens: context.sessionType === 'realtime' ? 75 : 200,
-      temperature: 0.7,
+      temperature: 0.8,
       top_p: 0.9,
       do_sample: true,
-      repetition_penalty: 1.1,
-      return_full_text: false
+      repetition_penalty: 1.2,
+      return_full_text: false,
+      pad_token_id: 50256 // GPT-2 pad token
     });
 
     let response = result[0]?.generated_text || '';
     
-    // Extract assistant response from the result
-    if (Array.isArray(response) && response.length > 0) {
-      const lastMessage = response[response.length - 1];
-      response = lastMessage?.content || '';
-    }
-    
+    // Clean up the response
     response = response.trim();
     
+    // Remove any leftover tokens or incomplete sentences
+    response = response.replace(/\s*<\|.*?\|>\s*/g, '').trim();
+    
     if (!response) {
-      throw new Error('Empty response from GPT-OSS');
+      throw new Error('Empty response from conversation model');
     }
 
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
     
-    console.log('GPT-OSS response generated successfully:', response.substring(0, 100) + '...');
+    console.log('Conversation response generated successfully:', response.substring(0, 100) + '...');
     return response;
 
   } catch (error: any) {
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
-    console.error('Error with GPT-OSS generation:', error);
+    console.error('Error with conversation generation:', error);
     
     if (retryCount < 1) {
-      console.log('Retrying GPT-OSS generation...');
+      console.log('Retrying conversation generation...');
       await new Promise(resolve => setTimeout(resolve, 2000));
       return generateTherapyResponse(userMessage, context, retryCount + 1);
     }
     
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error.message } }));
     
-    // Fallback responses if GPT-OSS fails
+    // Fallback responses if conversation model fails
     const fallbacks = {
       'child': "I'm here to listen to you. Can you tell me more about how you're feeling?",
       'teen': "That sounds really tough. I'm here to help you work through this. What's been the hardest part?",
@@ -196,29 +189,23 @@ export const generateWelcomeMessage = async (age: string): Promise<string> => {
   const start = performance.now?.() ?? Date.now();
   
   try {
-    console.log('Generating welcome message with GPT-OSS');
+    console.log('Generating welcome message with conversation model');
     
     const generator = await initializeGPTOSS();
-    const messages = createWelcomeMessages(age);
+    const prompt = createWelcomePrompt(age);
     
-    const result = await generator(messages, {
+    const result = await generator(prompt, {
       max_new_tokens: 100,
       temperature: 0.8,
       top_p: 0.9,
       do_sample: true,
-      repetition_penalty: 1.1,
-      return_full_text: false
+      repetition_penalty: 1.2,
+      return_full_text: false,
+      pad_token_id: 50256
     });
 
     let welcomeMessage = result[0]?.generated_text || '';
-    
-    // Extract assistant response from the result
-    if (Array.isArray(welcomeMessage) && welcomeMessage.length > 0) {
-      const lastMessage = welcomeMessage[welcomeMessage.length - 1];
-      welcomeMessage = lastMessage?.content || '';
-    }
-    
-    welcomeMessage = welcomeMessage.trim();
+    welcomeMessage = welcomeMessage.replace(/\s*<\|.*?\|>\s*/g, '').trim();
     
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
@@ -227,7 +214,7 @@ export const generateWelcomeMessage = async (age: string): Promise<string> => {
   } catch (error) {
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error instanceof Error ? error.message : 'Unknown error' } }));
-    console.error('Failed to generate welcome message with GPT-OSS:', error);
+    console.error('Failed to generate welcome message with conversation model:', error);
     return getDefaultWelcomeMessage(age);
   }
 };
