@@ -43,8 +43,8 @@ const initializeGPTOSS = async () => {
   return gptOssGenerator;
 };
 
-// Create harmony format prompt as required by GPT-OSS
-const createHarmonyPrompt = (context: TherapyContext, userMessage: string): string => {
+// Create system prompt for GPT-OSS with reasoning level
+const createSystemPrompt = (context: TherapyContext): string => {
   const systemInstructions = {
     'child': 'You are a gentle, caring therapist for children ages 5-12. Use simple, warm language. Be encouraging and patient. Keep responses short and easy to understand.',
     'teen': 'You are an understanding therapist for teenagers ages 13-17. Be relatable and non-judgmental. Acknowledge their unique challenges without being preachy.',
@@ -61,21 +61,21 @@ const createHarmonyPrompt = (context: TherapyContext, userMessage: string): stri
     emotionalContext = `\n\nThe client appears to be feeling ${context.mood || 'unknown'} and their emotional state seems ${context.emotion || 'neutral'}. Please acknowledge these feelings appropriately.`;
   }
 
-  // Harmony format structure
-  return `<|im_start|>system
+  // Set reasoning level for therapy context
+  let reasoningLevel = 'Reasoning: medium';
+  if (context.sessionType === 'realtime') {
+    reasoningLevel = 'Reasoning: low'; // Faster responses for real-time
+  }
+
+  return `${reasoningLevel}
+
 ${systemRole}${emotionalContext}
 
-You are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.
-<|im_end|>
-<|im_start|>user
-${userMessage}
-<|im_end|>
-<|im_start|>assistant
-`;
+You are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.`;
 };
 
-// Create welcome message prompt in harmony format
-const createWelcomePrompt = (age: string): string => {
+// Create welcome message for GPT-OSS using messages format
+const createWelcomeMessages = (age: string) => {
   const welcomeInstructions = {
     'child': 'Create a warm, simple welcome message for a child starting therapy. Make them feel safe and comfortable.',
     'teen': 'Create a genuine welcome message for a teenager. Avoid being patronizing and acknowledge their maturity.',
@@ -86,14 +86,16 @@ const createWelcomePrompt = (age: string): string => {
 
   const instruction = welcomeInstructions[age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
 
-  return `<|im_start|>system
-You are a professional therapist meeting a new client for the first time. ${instruction}
-<|im_end|>
-<|im_start|>user
-Hi, I'm here for my first therapy session.
-<|im_end|>
-<|im_start|>assistant
-`;
+  return [
+    {
+      role: "system",
+      content: `Reasoning: low\n\nYou are a professional therapist meeting a new client for the first time. ${instruction}`
+    },
+    {
+      role: "user",
+      content: "Hi, I'm here for my first therapy session."
+    }
+  ];
 };
 
 export const generateTherapyResponse = async (
@@ -121,29 +123,39 @@ export const generateTherapyResponse = async (
     // Initialize GPT-OSS if needed
     const generator = await initializeGPTOSS();
     
-    // Create harmony format prompt
-    const prompt = createHarmonyPrompt(context, sanitizedMessage);
+    // Create messages array for harmony format (transformers handles the format automatically)
+    const messages = [
+      {
+        role: "system",
+        content: createSystemPrompt(context)
+      },
+      {
+        role: "user", 
+        content: sanitizedMessage
+      }
+    ];
     
-    console.log('Using prompt:', prompt.substring(0, 200) + '...');
+    console.log('Using messages with harmony format');
 
-    // Generate response with optimized parameters for therapy
-    const result = await generator(prompt, {
+    // Generate response using chat template (automatically applies harmony format)
+    const result = await generator(messages, {
       max_new_tokens: context.sessionType === 'realtime' ? 75 : 200,
       temperature: 0.7,
       top_p: 0.9,
       do_sample: true,
       repetition_penalty: 1.1,
-      return_full_text: false,
-      stop_strings: ['<|im_end|>', '<|im_start|>']
+      return_full_text: false
     });
 
     let response = result[0]?.generated_text || '';
     
-    // Clean up the response
-    response = response.trim();
+    // Extract assistant response from the result
+    if (Array.isArray(response) && response.length > 0) {
+      const lastMessage = response[response.length - 1];
+      response = lastMessage?.content || '';
+    }
     
-    // Remove any leftover formatting tokens
-    response = response.replace(/<\|.*?\|>/g, '').trim();
+    response = response.trim();
     
     if (!response) {
       throw new Error('Empty response from GPT-OSS');
@@ -187,20 +199,26 @@ export const generateWelcomeMessage = async (age: string): Promise<string> => {
     console.log('Generating welcome message with GPT-OSS');
     
     const generator = await initializeGPTOSS();
-    const prompt = createWelcomePrompt(age);
+    const messages = createWelcomeMessages(age);
     
-    const result = await generator(prompt, {
+    const result = await generator(messages, {
       max_new_tokens: 100,
       temperature: 0.8,
       top_p: 0.9,
       do_sample: true,
       repetition_penalty: 1.1,
-      return_full_text: false,
-      stop_strings: ['<|im_end|>', '<|im_start|>']
+      return_full_text: false
     });
 
     let welcomeMessage = result[0]?.generated_text || '';
-    welcomeMessage = welcomeMessage.replace(/<\|.*?\|>/g, '').trim();
+    
+    // Extract assistant response from the result
+    if (Array.isArray(welcomeMessage) && welcomeMessage.length > 0) {
+      const lastMessage = welcomeMessage[welcomeMessage.length - 1];
+      welcomeMessage = lastMessage?.content || '';
+    }
+    
+    welcomeMessage = welcomeMessage.trim();
     
     const latencyMs = (performance.now?.() ?? Date.now()) - start;
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
