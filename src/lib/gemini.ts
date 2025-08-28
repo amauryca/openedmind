@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { pipeline } from '@huggingface/transformers';
 import { securityManager } from './security';
 
 export interface TherapyContext {
@@ -9,31 +9,51 @@ export interface TherapyContext {
   previousMessages?: string[];
 }
 
-const getAgeAppropriatePrompt = (age: string) => {
-  const prompts = {
-    child: `You are a gentle, caring AI therapist for children ages 5-12. Use simple, warm language that children can understand. Be encouraging, patient, and use metaphors or stories when helpful. Focus on validating their feelings and teaching basic coping skills. Keep responses under 50 words for video sessions and always maintain a supportive, nurturing tone.`,
-    
-    teen: `You are an empathetic AI therapist for teenagers ages 13-17. Understand that teens face unique challenges like identity formation, peer pressure, academic stress, and family relationships. Use age-appropriate language, avoid being preachy, and validate their experiences. Provide practical coping strategies and encourage healthy expression of emotions. Keep responses under 60 words for video sessions.`,
-    
-    'young-adult': `You are a supportive AI therapist for young adults ages 18-25. Address challenges like career uncertainty, relationships, independence, financial stress, and life transitions. Use collaborative language, offer practical advice, and help them develop emotional regulation skills. Acknowledge the complexity of this life stage. Keep responses under 60 words for video sessions.`,
-    
-    adult: `You are a professional AI therapist for adults ages 26-45. Address work-life balance, relationships, parenting, career pressures, and personal growth. Use sophisticated therapeutic techniques, encourage self-reflection, and provide evidence-based coping strategies. Maintain professional warmth and empathy. Keep responses under 70 words for video sessions.`,
-    
-    senior: `You are a respectful AI therapist for adults 45+. Address challenges like health concerns, life transitions, relationships, career changes, and aging-related issues. Show respect for their life experience, wisdom, and perspectives. Use mature, understanding language and focus on adaptation and resilience. Keep responses under 70 words for video sessions.`
-  };
-  
-  return prompts[age as keyof typeof prompts] || prompts.adult;
+// Initialize the text generation pipeline
+let textGenerator: any = null;
+
+const initializeGPTOSS = async () => {
+  if (!textGenerator) {
+    try {
+      console.log('Initializing GPT-OSS model...');
+      textGenerator = await pipeline(
+        "text-generation",
+        "openai/gpt-oss-20b", // Using the smaller model for better performance
+        { device: "webgpu" }
+      );
+      console.log('GPT-OSS initialized with WebGPU');
+    } catch (error) {
+      console.warn("WebGPU not available, falling back to CPU");
+      textGenerator = await pipeline(
+        "text-generation",
+        "openai/gpt-oss-20b"
+      );
+      console.log('GPT-OSS initialized with CPU');
+    }
+  }
+  return textGenerator;
 };
 
-const getMoodContext = (mood?: string, emotion?: string) => {
-  if (!mood && !emotion) return '';
+const createTherapyPrompt = (context: TherapyContext, userMessage: string): string => {
+  const ageGuidelines = {
+    'child': "You are a gentle, patient therapist speaking with a child (ages 5-12). Use simple, warm language that's easy to understand. Be encouraging and supportive. Keep responses brief and caring.",
+    'teen': "You are an understanding therapist working with a teenager (ages 13-17). Be relatable while maintaining professional boundaries. Acknowledge their feelings without being dismissive.",
+    'young-adult': "You are a supportive therapist working with a young adult (ages 18-25). Address their unique challenges with empathy and practical guidance.",
+    'adult': "You are a professional therapist working with an adult client. Provide thoughtful, evidence-based guidance while being empathetic and non-judgmental.",
+    'senior': "You are a compassionate therapist working with an older adult. Be respectful of their life experience while providing gentle support and practical guidance."
+  };
+
+  const systemPrompt = ageGuidelines[context.age as keyof typeof ageGuidelines] || ageGuidelines.adult;
   
-  let context = '';
-  if (mood) context += `The user's facial analysis indicates they appear ${mood.toLowerCase()}. `;
-  if (emotion) context += `Their voice emotion analysis suggests they sound ${emotion.toLowerCase()}. `;
-  context += 'Please acknowledge these emotional cues in your response when appropriate.';
-  
-  return context;
+  const moodContext = context.mood || context.emotion 
+    ? `\nCurrent emotional state detected: ${context.mood || 'unknown'} mood, ${context.emotion || 'unknown'} emotion. Please acknowledge these feelings appropriately.`
+    : '';
+
+  return `${systemPrompt}${moodContext}
+
+Client: ${userMessage}
+
+Therapist:`;
 };
 
 export const generateTherapyResponse = async (
@@ -51,73 +71,112 @@ export const generateTherapyResponse = async (
 
     const sanitizedMessage = securityManager.sanitizeInput(userMessage);
 
-    // Call Supabase edge function
-    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
-      body: {
-        userMessage: sanitizedMessage,
-        context: context
-      }
+    console.log('Generating therapy response with GPT-OSS, context:', { 
+      age: context.age, 
+      sessionType: context.sessionType,
+      messageLength: sanitizedMessage.length 
     });
 
-    const latencyMs = (performance.now?.() ?? Date.now()) - start;
-
-    if (error) {
-      console.error('Supabase function error:', error);
-      window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error.message } }));
-      
-      // Retry once if it's a network or timeout error
-      if (retryCount < 1 && (error.message?.includes('timeout') || error.message?.includes('network'))) {
-        console.log('Retrying therapy response generation...');
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-        return generateTherapyResponse(userMessage, context, retryCount + 1);
-      }
-      
-      throw new Error(error.message);
-    }
-
-    if (!data?.response) {
-      throw new Error('No response data received');
-    }
-
-    window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
-    return data.response;
-  } catch (error) {
-    console.error('Error generating therapy response:', error instanceof Error ? error.message : 'Unknown error');
+    // Initialize the model if not already done
+    const generator = await initializeGPTOSS();
     
-    // Retry once for any error if we haven't retried yet
-    if (retryCount < 1) {
-      console.log('Retrying therapy response generation due to error...');
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+    // Create the prompt
+    const prompt = createTherapyPrompt(context, sanitizedMessage);
+    
+    // Generate response with appropriate parameters
+    const result = await generator(prompt, {
+      max_new_tokens: context.sessionType === 'realtime' ? 50 : 150,
+      temperature: 0.7,
+      do_sample: true,
+      return_full_text: false,
+      pad_token_id: 50256 // Standard padding token
+    });
+
+    let generatedText = result[0]?.generated_text || '';
+    
+    // Clean up the response
+    generatedText = generatedText.trim();
+    
+    // Remove any potential prompt echoes
+    if (generatedText.includes('Therapist:')) {
+      generatedText = generatedText.split('Therapist:').pop()?.trim() || generatedText;
+    }
+    if (generatedText.includes('Client:')) {
+      generatedText = generatedText.split('Client:')[0]?.trim() || generatedText;
+    }
+    
+    if (!generatedText) {
+      throw new Error('No response generated from GPT-OSS model');
+    }
+
+    const latencyMs = (performance.now?.() ?? Date.now()) - start;
+    window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
+    
+    console.log('Successfully generated therapy response with GPT-OSS');
+    return generatedText;
+
+  } catch (error: any) {
+    const latencyMs = (performance.now?.() ?? Date.now()) - start;
+    console.error('Error generating therapy response with GPT-OSS:', error);
+    
+    if (retryCount < 2) {
+      console.log(`Retrying GPT-OSS generation... Attempt ${retryCount + 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
       return generateTherapyResponse(userMessage, context, retryCount + 1);
     }
     
-    throw new Error('Failed to generate therapy response after retries');
+    window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error.message } }));
+    
+    // Fallback response if all retries fail
+    const fallbackResponses = {
+      'child': "I'm here to listen to you. Can you tell me more about how you're feeling?",
+      'teen': "That sounds really tough. I'm here to help you work through this. What's the hardest part for you right now?",
+      'young-adult': "Thank you for sharing that with me. It takes courage to open up. What would feel most helpful to explore together?",
+      'adult': "I hear what you're saying, and I want you to know that your feelings are valid. How can we work on this together?",
+      'senior': "I appreciate you sharing this with me. Your feelings are important. What support would be most helpful right now?"
+    };
+    
+    return fallbackResponses[context.age as keyof typeof fallbackResponses] || fallbackResponses.adult;
   }
 };
-
 
 export const generateWelcomeMessage = async (age: string): Promise<string> => {
   const start = performance.now?.() ?? Date.now();
   try {
-    // Call Supabase edge function for welcome message
-    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
-      body: {
-        context: { age, sessionType: 'text' as const },
-        isWelcome: true
-      }
+    const welcomePrompts = {
+      'child': "You are a gentle, caring therapist meeting a child for the first time. Create a warm, simple welcome message that makes them feel safe and comfortable.",
+      'teen': "You are an understanding therapist meeting a teenager for the first time. Create a welcoming message that feels genuine and not patronizing.",
+      'young-adult': "You are a supportive therapist meeting a young adult for the first time. Create a welcoming message that acknowledges their unique challenges.",
+      'adult': "You are a professional therapist beginning a session with an adult client. Create a warm, professional welcome message.",
+      'senior': "You are a respectful therapist meeting an older adult for the first time. Create a welcoming message that honors their experience."
+    };
+
+    const generator = await initializeGPTOSS();
+    const prompt = (welcomePrompts[age as keyof typeof welcomePrompts] || welcomePrompts.adult) + "\n\nTherapist:";
+    
+    const result = await generator(prompt, {
+      max_new_tokens: 100,
+      temperature: 0.8,
+      do_sample: true,
+      return_full_text: false,
+      pad_token_id: 50256
     });
 
-    const latencyMs = (performance.now?.() ?? Date.now()) - start;
-
-    if (error) {
-      window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error.message } }));
-      throw new Error(error.message);
+    let welcomeMessage = result[0]?.generated_text?.trim() || '';
+    
+    // Clean up the response
+    if (welcomeMessage.includes('Therapist:')) {
+      welcomeMessage = welcomeMessage.split('Therapist:').pop()?.trim() || welcomeMessage;
     }
-
+    
+    const latencyMs = (performance.now?.() ?? Date.now()) - start;
     window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: true } }));
-    return data.response;
+    
+    return welcomeMessage || getDefaultWelcomeMessage(age);
   } catch (error) {
-    console.error('Error generating welcome message:', error instanceof Error ? error.message : 'Unknown error');
+    const latencyMs = (performance.now?.() ?? Date.now()) - start;
+    window.dispatchEvent(new CustomEvent('edge:result', { detail: { latencyMs, ok: false, error: error instanceof Error ? error.message : 'Unknown error' } }));
+    console.error('Failed to generate welcome message with GPT-OSS:', error);
     return getDefaultWelcomeMessage(age);
   }
 };
