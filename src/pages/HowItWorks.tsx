@@ -43,11 +43,11 @@ const HowItWorks: React.FC = () => {
               <CardTitle>AI & Backend</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>AI responses are generated via a Supabase Edge Function that calls Google AI.</p>
+              <p>AI responses are generated locally using OpenAI's open-source GPT-OSS model.</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Edge Function: generate-therapy-response</li>
-                <li>Age-aware prompts and short, empathetic replies</li>
-                <li>No long-term storage of chat content by default</li>
+                <li>Model: GPT-OSS-20b running in browser</li>
+                <li>Age-aware prompts and empathetic replies</li>
+                <li>No data sent to external servers</li>
               </ul>
             </CardContent>
           </Card>
