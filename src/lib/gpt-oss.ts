@@ -15,35 +15,35 @@ let gptOssGenerator: any = null;
 const initializeGPTOSS = async () => {
   if (!gptOssGenerator) {
     try {
-      console.log('Initializing GPT-OSS model...');
-      // Try GPT-OSS first
+      console.log('Initializing text generation model...');
+      // Try WebGPU first with a supported model
       gptOssGenerator = await pipeline(
         "text-generation",
-        "openai/gpt-oss-20b",
+        "onnx-community/gpt2",
         { 
           device: "webgpu",
           dtype: "fp16"
         }
       );
-      console.log('GPT-OSS model initialized with WebGPU');
+      console.log('Text generation model initialized with WebGPU');
     } catch (error) {
-      console.warn("WebGPU not available, falling back to CPU");
+      console.warn("WebGPU not available, falling back to WASM");
       try {
         gptOssGenerator = await pipeline(
           "text-generation",
-          "openai/gpt-oss-20b",
-          { device: "cpu" }
+          "onnx-community/gpt2",
+          { device: "wasm" }
         );
-        console.log('GPT-OSS model initialized with CPU');
-      } catch (cpuError) {
-        console.warn('GPT-OSS failed, trying DialoGPT fallback:', cpuError);
+        console.log('Text generation model initialized with WASM');
+      } catch (wasmError) {
+        console.warn('GPT-2 failed, trying DistilGPT-2:', wasmError);
         try {
           gptOssGenerator = await pipeline(
             "text-generation",
-            "microsoft/DialoGPT-medium",
-            { device: "cpu" }
+            "onnx-community/distilgpt2",
+            { device: "wasm" }
           );
-          console.log('DialoGPT fallback model initialized');
+          console.log('DistilGPT-2 model initialized');
         } catch (finalError) {
           console.error('All models failed to initialize:', finalError);
           throw new Error('Unable to initialize any conversation model');
