@@ -15,35 +15,35 @@ let gptOssGenerator: any = null;
 const initializeGPTOSS = async () => {
   if (!gptOssGenerator) {
     try {
-      console.log('Initializing conversation model...');
-      // Use a supported model for now until GPT-OSS is available in transformers.js
+      console.log('Initializing GPT-OSS model...');
+      // Try GPT-OSS first
       gptOssGenerator = await pipeline(
         "text-generation",
-        "microsoft/DialoGPT-medium",
+        "openai/gpt-oss-20b",
         { 
           device: "webgpu",
           dtype: "fp16"
         }
       );
-      console.log('Conversation model initialized with WebGPU');
+      console.log('GPT-OSS model initialized with WebGPU');
     } catch (error) {
       console.warn("WebGPU not available, falling back to CPU");
       try {
         gptOssGenerator = await pipeline(
           "text-generation",
-          "microsoft/DialoGPT-medium",
+          "openai/gpt-oss-20b",
           { device: "cpu" }
         );
-        console.log('Conversation model initialized with CPU');
+        console.log('GPT-OSS model initialized with CPU');
       } catch (cpuError) {
-        console.warn('DialoGPT-medium failed, trying GPT-2 fallback:', cpuError);
+        console.warn('GPT-OSS failed, trying DialoGPT fallback:', cpuError);
         try {
           gptOssGenerator = await pipeline(
             "text-generation",
-            "gpt2",
+            "microsoft/DialoGPT-medium",
             { device: "cpu" }
           );
-          console.log('GPT-2 fallback model initialized');
+          console.log('DialoGPT fallback model initialized');
         } catch (finalError) {
           console.error('All models failed to initialize:', finalError);
           throw new Error('Unable to initialize any conversation model');
@@ -126,20 +126,43 @@ export const generateTherapyResponse = async (
     // Initialize conversation model if needed
     const generator = await initializeGPTOSS();
     
-    // Create therapy-focused prompt
-    const prompt = createTherapyPrompt(context, sanitizedMessage);
+    // Get system role and emotional context
+    const systemInstructions = {
+      'child': 'You are a gentle, caring therapist for children ages 5-12. Use simple, warm language. Be encouraging and patient. Keep responses short and easy to understand.',
+      'teen': 'You are an understanding therapist for teenagers ages 13-17. Be relatable and non-judgmental. Acknowledge their unique challenges without being preachy.',
+      'young-adult': 'You are a supportive therapist for young adults ages 18-25. Address career, relationship, and independence challenges with empathy and practical guidance.',
+      'adult': 'You are a professional therapist for adults ages 26-45. Use evidence-based approaches and help with work-life balance, relationships, and personal growth.',
+      'senior': 'You are a respectful therapist for adults 45+. Honor their life experience while addressing health, transitions, and aging-related concerns.'
+    };
+
+    const systemRole = systemInstructions[context.age as keyof typeof systemInstructions] || systemInstructions.adult;
     
-    console.log('Using prompt:', prompt.substring(0, 200) + '...');
+    // Add emotional context if available
+    let emotionalContext = '';
+    if (context.mood || context.emotion) {
+      emotionalContext = `\n\nThe client appears to be feeling ${context.mood || 'unknown'} and their emotional state seems ${context.emotion || 'neutral'}. Please acknowledge these feelings appropriately.`;
+    }
+
+    // Use chat message format for GPT-OSS
+    const messages = [
+      {
+        role: "system",
+        content: `${systemRole}${emotionalContext}\n\nYou are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.`
+      },
+      {
+        role: "user", 
+        content: sanitizedMessage
+      }
+    ];
 
     // Generate response with therapy-optimized parameters
-    const result = await generator(prompt, {
+    const result = await generator(messages, {
       max_new_tokens: context.sessionType === 'realtime' ? 75 : 200,
       temperature: 0.8,
       top_p: 0.9,
       do_sample: true,
       repetition_penalty: 1.2,
-      return_full_text: false,
-      pad_token_id: 50256 // GPT-2 pad token
+      return_full_text: false
     });
 
     let response = result[0]?.generated_text || '';
