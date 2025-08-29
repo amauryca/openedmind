@@ -18,11 +18,11 @@ interface TherapyContext {
 
 const createSystemPrompt = (context: TherapyContext): string => {
   const systemInstructions = {
-    'child': 'You are a gentle, caring therapist for children ages 5-12. Use simple, warm language. Be encouraging and patient. Keep responses short and easy to understand.',
-    'teen': 'You are an understanding therapist for teenagers ages 13-17. Be relatable and non-judgmental. Acknowledge their unique challenges without being preachy.',
-    'young-adult': 'You are a supportive therapist for young adults ages 18-25. Address career, relationship, and independence challenges with empathy and practical guidance.',
-    'adult': 'You are a professional therapist for adults ages 26-45. Use evidence-based approaches and help with work-life balance, relationships, and personal growth.',
-    'senior': 'You are a respectful therapist for adults 45+. Honor their life experience while addressing health, transitions, and aging-related concerns.'
+    'child': 'You are a caring child therapist. Use simple, warm language. Keep responses brief and encouraging.',
+    'teen': 'You are a teen therapist. Be relatable and non-judgmental. Keep responses concise and supportive.',
+    'young-adult': 'You are a therapist for young adults. Be empathetic and practical. Keep responses focused.',
+    'adult': 'You are a professional therapist. Use evidence-based approaches. Keep responses clear and helpful.',
+    'senior': 'You are a respectful therapist for older adults. Honor their experience. Keep responses thoughtful but brief.'
   };
 
   const systemRole = systemInstructions[context.age as keyof typeof systemInstructions] || systemInstructions.adult;
@@ -32,7 +32,7 @@ const createSystemPrompt = (context: TherapyContext): string => {
     emotionalContext = `\n\nThe client appears to be feeling ${context.mood || 'unknown'} and their emotional state seems ${context.emotion || 'neutral'}. Please acknowledge these feelings appropriately.`;
   }
 
-  return `${systemRole}${emotionalContext}\n\nYou are having a therapy session. Provide a helpful, empathetic response that validates the client's feelings and offers gentle guidance. Keep responses conversational and supportive.`;
+  return `${systemRole}${emotionalContext}\n\nProvide a brief, helpful response that validates feelings and offers guidance. Keep it concise.`;
 };
 
 serve(async (req) => {
@@ -54,11 +54,11 @@ serve(async (req) => {
     
     if (isWelcome) {
       const welcomeInstructions = {
-        'child': 'Create a warm, simple welcome message for a child starting therapy. Make them feel safe and comfortable.',
-        'teen': 'Create a genuine welcome message for a teenager. Avoid being patronizing and acknowledge their maturity.',
-        'young-adult': 'Create a welcoming message for a young adult. Acknowledge their unique life stage challenges.',
-        'adult': 'Create a professional but warm welcome message for an adult beginning therapy.',
-        'senior': 'Create a respectful welcome message that honors the wisdom and experience of an older adult.'
+        'child': 'Create a warm, brief welcome for a child starting therapy.',
+        'teen': 'Create a genuine, concise welcome for a teenager.',
+        'young-adult': 'Create a brief welcoming message for a young adult.',
+        'adult': 'Create a professional but warm, brief welcome for an adult.',
+        'senior': 'Create a respectful, concise welcome for an older adult.'
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
@@ -97,10 +97,10 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'deepseek/deepseek-chat',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 150 : 300,
-        temperature: 0.7,
-        top_p: 0.9,
-        frequency_penalty: 0.2,
+        max_tokens: context?.sessionType === 'realtime' ? 100 : 150,
+        temperature: 0.5,
+        top_p: 0.8,
+        frequency_penalty: 0.1,
         presence_penalty: 0.1
       }),
     });
