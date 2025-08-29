@@ -9,46 +9,43 @@ export interface TherapyContext {
   previousMessages?: string[];
 }
 
-// GPT-OSS pipeline instance
+// GPT-OSS pipeline instance - reset to null to force reinitialization
 let gptOssGenerator: any = null;
 
 const initializeGPTOSS = async () => {
+  // Force reset to ensure we use the new model
+  gptOssGenerator = null;
+  
   if (!gptOssGenerator) {
     try {
-      console.log('Initializing text generation model...');
-      // Try WebGPU first with DistilGPT-2 (has model files available)
-      gptOssGenerator = await pipeline(
-        "text-generation",
-        "Xenova/distilgpt2",
-        { 
-          device: "webgpu",
-          dtype: "fp16"
-        }
-      );
-      console.log('DistilGPT-2 model initialized with WebGPU');
-    } catch (error) {
-      console.warn("WebGPU not available, falling back to WASM");
+      console.log('Initializing DistilGPT-2 model...');
+      // Use DistilGPT-2 as it has all required ONNX files available
       try {
+        console.log('Attempting WebGPU initialization...');
         gptOssGenerator = await pipeline(
           "text-generation",
           "Xenova/distilgpt2",
-          { device: "wasm" }
+          { 
+            device: "webgpu",
+            dtype: "fp16"
+          }
+        );
+        console.log('DistilGPT-2 model initialized with WebGPU');
+      } catch (webgpuError) {
+        console.warn("WebGPU not available, falling back to WASM:", webgpuError);
+        gptOssGenerator = await pipeline(
+          "text-generation",
+          "Xenova/distilgpt2",
+          { 
+            device: "wasm",
+            dtype: "q8"
+          }
         );
         console.log('DistilGPT-2 model initialized with WASM');
-      } catch (wasmError) {
-        console.warn('DistilGPT-2 failed, trying GPT-2:', wasmError);
-        try {
-          gptOssGenerator = await pipeline(
-            "text-generation",
-            "Xenova/gpt2",
-            { device: "wasm" }
-          );
-          console.log('GPT-2 model initialized as fallback');
-        } catch (finalError) {
-          console.error('All models failed to initialize:', finalError);
-          throw new Error('Unable to initialize any conversation model');
-        }
       }
+    } catch (error) {
+      console.error('DistilGPT-2 failed to initialize:', error);
+      throw new Error('Unable to initialize conversation model');
     }
   }
   return gptOssGenerator;
