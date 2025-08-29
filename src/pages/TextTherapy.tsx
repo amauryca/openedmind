@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Send, MessageCircle, User, Bot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { generateTherapyResponse, generateWelcomeMessage, TherapyContext } from "@/lib/gpt-oss";
+import { generateTherapyResponse, generateWelcomeMessage, TherapyContext } from "@/lib/therapyApi";
 import { useToast } from "@/hooks/use-toast";
 import NavBar from "@/components/NavBar";
 import EmergencyModal from "@/components/EmergencyModal";
@@ -127,14 +127,14 @@ const TextTherapy = () => {
     setIsTyping(true);
 
     try {
-      // Prepare context for GPT-OSS
+      // Prepare context for therapy API
       const context: TherapyContext = {
         age: selectedAge,
         sessionType: 'text',
         previousMessages: messages.slice(-6).map(m => m.content) // Last 6 messages for context
       };
 
-      // Generate AI response using GPT-OSS
+      // Generate AI response using OpenRouter
       const aiContent = await generateTherapyResponse(currentInput, context);
       
       const aiMessage: Message = {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { TherapyContext, generateTherapyResponse, generateWelcomeMessage } from "@/lib/gpt-oss";
+import { TherapyContext, generateTherapyResponse, generateWelcomeMessage } from "@/lib/therapyApi";
 import { initializeFaceDetection, initializeVoiceEmotionAnalysis, speakText, speechAPI } from "@/lib/apis";
 import { detectEmergency } from "@/utils/emergencyDetection";
 import { securityManager } from "@/lib/security";

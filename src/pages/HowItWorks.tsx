@@ -43,11 +43,11 @@ const HowItWorks: React.FC = () => {
               <CardTitle>AI & Backend</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>AI responses are generated locally using OpenAI's open-source GPT-OSS model.</p>
+              <p>AI responses are generated using Claude 3.5 Sonnet through OpenRouter API.</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Model: GPT-OSS-20b running in browser</li>
+                <li>Model: Anthropic Claude 3.5 Sonnet</li>
                 <li>Age-aware prompts and empathetic replies</li>
-                <li>No data sent to external servers</li>
+                <li>Secure API communication via Supabase Edge Functions</li>
               </ul>
             </CardContent>
           </Card>
