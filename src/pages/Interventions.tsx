@@ -1,20 +1,32 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 import { Helmet } from "react-helmet-async";
-import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target } from "lucide-react";
+import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target, Filter } from "lucide-react";
 
 const Interventions = () => {
   const canonical = useMemo(() => `${window.location.origin}/interventions`, []);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  const categories = [
+    { id: "all", name: "All Interventions", icon: Target },
+    { id: "breathing", name: "Breathing & Calming", icon: Wind },
+    { id: "grounding", name: "Grounding & Crisis", icon: Footprints },
+    { id: "thought-work", name: "Thought Work & CBT", icon: Brain },
+    { id: "body-movement", name: "Body & Movement", icon: HeartPulse },
+    { id: "self-compassion", name: "Self-Compassion & Mood", icon: Heart },
+    { id: "behavioral", name: "Behavioral & Action", icon: ListChecks },
+  ];
 
   const interventions = [
     {
       id: "box-breathing",
       title: "Box Breathing (4-4-4-4)",
       icon: Wind,
+      category: "breathing",
       summary: "A quick calming technique to reduce anxiety and steady your nervous system.",
       steps: [
         "Breathe in through your nose for 4 seconds",
@@ -28,6 +40,7 @@ const Interventions = () => {
       id: "grounding-54321",
       title: "5-4-3-2-1 Grounding",
       icon: Footprints,
+      category: "grounding",
       summary: "Bring attention to the present by engaging your five senses.",
       steps: [
         "Notice 5 things you can see",
@@ -41,6 +54,7 @@ const Interventions = () => {
       id: "thought-record",
       title: "Thought Record (CBT)",
       icon: Brain,
+      category: "thought-work",
       summary: "Challenge unhelpful thoughts with evidence and balanced alternatives.",
       steps: [
         "Situation: Briefly describe what happened",
@@ -54,6 +68,7 @@ const Interventions = () => {
       id: "pmr",
       title: "Progressive Muscle Relaxation",
       icon: HeartPulse,
+      category: "body-movement",
       summary: "Release tension by tensing and relaxing muscle groups head-to-toe.",
       steps: [
         "Start with your hands: tense for 5 seconds, then release for 10",
@@ -66,6 +81,7 @@ const Interventions = () => {
       id: "gratitude-journal",
       title: "Gratitude Journal (3 Good Things)",
       icon: NotebookPen,
+      category: "self-compassion",
       summary: "Shift attention to positives by noting three good things from today.",
       steps: [
         "Write down 3 things that went well today",
@@ -78,6 +94,7 @@ const Interventions = () => {
       id: "self-compassion",
       title: "Self-Compassion Break",
       icon: HeartHandshake,
+      category: "self-compassion",
       summary: "Offer yourself kindness in difficult moments using 3 short statements.",
       steps: [
         "Mindfulness: ‘This is a moment of suffering.’",
@@ -90,6 +107,7 @@ const Interventions = () => {
       id: "body-scan",
       title: "Body Scan (3–5 min)",
       icon: Scan,
+      category: "body-movement",
       summary: "Increase awareness and release tension by scanning from head to toe.",
       steps: [
         "Sit or lie down comfortably and close your eyes if safe",
@@ -102,6 +120,7 @@ const Interventions = () => {
       id: "urge-surfing",
       title: "Urge Surfing",
       icon: Waves,
+      category: "body-movement",
       summary: "Ride out difficult urges like waves without acting on them.",
       steps: [
         "Notice the urge in the body: location, shape, intensity",
@@ -114,6 +133,7 @@ const Interventions = () => {
       id: "mindfulness-minute",
       title: "Mindfulness Minute",
       icon: Timer,
+      category: "breathing",
       summary: "Reset with a 60‑second focus on the breath and senses.",
       steps: [
         "Set a 1‑minute timer",
@@ -126,6 +146,7 @@ const Interventions = () => {
       id: "behavioral-activation",
       title: "Behavioral Activation (Small Step)",
       icon: ListChecks,
+      category: "behavioral",
       summary: "Lift mood by scheduling one simple, rewarding activity today.",
       steps: [
         "Choose a 10‑minute activity (walk, call a friend, tidy a corner)",
@@ -138,6 +159,7 @@ const Interventions = () => {
       id: "affirmations",
       title: "Positive Affirmations",
       icon: Quote,
+      category: "self-compassion",
       summary: "Reinforce supportive beliefs with short, believable statements.",
       steps: [
         "Pick 1–2 realistic statements (e.g., ‘I can handle this moment’)",
@@ -150,6 +172,7 @@ const Interventions = () => {
       id: "sleep-winddown",
       title: "Sleep Wind‑Down (15 min)",
       icon: Moon,
+      category: "breathing",
       summary: "Prepare for rest with a gentle routine to ease body and mind.",
       steps: [
         "Dim lights and silence notifications",
@@ -162,6 +185,7 @@ const Interventions = () => {
       id: "stop-technique",
       title: "STOP Technique",
       icon: StopCircle,
+      category: "grounding",
       summary: "Emergency grounding for overwhelming moments using 4 quick steps.",
       steps: [
         "Stop: Pause whatever you're doing",
@@ -175,6 +199,7 @@ const Interventions = () => {
       id: "loving-kindness",
       title: "Loving-Kindness Meditation",
       icon: Heart,
+      category: "self-compassion",
       summary: "Build self-compassion and emotional resilience through kind wishes.",
       steps: [
         "Start with yourself: 'May I be happy, may I be healthy, may I be at peace'",
@@ -188,6 +213,7 @@ const Interventions = () => {
       id: "values-clarification",
       title: "Values Clarification",
       icon: Compass,
+      category: "thought-work",
       summary: "Connect with your core values to guide decisions and find motivation.",
       steps: [
         "List 5-10 things that matter most to you (family, creativity, justice, etc.)",
@@ -201,6 +227,7 @@ const Interventions = () => {
       id: "worry-time",
       title: "Scheduled Worry Time",
       icon: Clock,
+      category: "thought-work",
       summary: "Contain anxiety by designating specific time for worries.",
       steps: [
         "Set aside 15-20 minutes daily at the same time for worrying",
@@ -214,6 +241,7 @@ const Interventions = () => {
       id: "cold-water-reset",
       title: "Cold Water Reset",
       icon: Snowflake,
+      category: "grounding",
       summary: "Use temperature change to quickly calm intense emotions and reset.",
       steps: [
         "Hold cold water or ice cubes in your hands for 30 seconds",
@@ -227,6 +255,7 @@ const Interventions = () => {
       id: "tipp-technique",
       title: "TIPP (DBT Crisis Skills)",
       icon: Zap,
+      category: "grounding",
       summary: "Four rapid techniques to change body chemistry and reduce crisis intensity.",
       steps: [
         "Temperature: Hold ice or splash cold water on face",
@@ -240,6 +269,7 @@ const Interventions = () => {
       id: "mindful-walking",
       title: "Mindful Walking",
       icon: TreePine,
+      category: "body-movement",
       summary: "Combine movement with mindfulness to ground yourself in the present.",
       steps: [
         "Walk slowly, focusing on the sensation of your feet touching the ground",
@@ -253,6 +283,7 @@ const Interventions = () => {
       id: "emotion-wheel",
       title: "Emotional Check-In Wheel",
       icon: Target,
+      category: "behavioral",
       summary: "Identify and process emotions using a systematic approach.",
       steps: [
         "Rate your current emotion intensity from 1-10",
@@ -263,6 +294,10 @@ const Interventions = () => {
       ],
     },
   ];
+
+  const filteredInterventions = selectedCategory === "all" 
+    ? interventions 
+    : interventions.filter(intervention => intervention.category === selectedCategory);
 
   const itemListStructuredData = {
     '@context': 'https://schema.org',
@@ -303,10 +338,34 @@ const Interventions = () => {
           </div>
         </header>
 
+        {/* Category filters */}
+        <nav aria-label="Category filters" className="mb-6 md:mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Filter by category:</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto py-2 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory scroll-smooth md:flex-wrap [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {categories.map(({ id, name, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => setSelectedCategory(id)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full border text-xs md:text-sm transition-colors whitespace-nowrap snap-start ${
+                  selectedCategory === id
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border text-foreground hover:bg-primary/10'
+                }`}
+              >
+                <Icon className="h-3 w-3 md:h-4 md:w-4" />
+                {name}
+              </button>
+            ))}
+          </div>
+        </nav>
+
         {/* Quick navigation chips */}
         <nav aria-label="Quick navigation" className="mb-6 md:mb-8">
           <ul className="flex gap-2 md:gap-3 overflow-x-auto md:overflow-visible py-2 md:py-1 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory scroll-smooth md:flex-wrap md:justify-center [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {interventions.map((it) => (
+            {filteredInterventions.map((it) => (
               <li key={it.id}>
                 <a href={`#${it.id}`} className="inline-block px-3 py-1.5 rounded-full border border-border text-xs md:text-sm text-foreground hover:bg-primary/10 transition-colors">
                   {it.title}
@@ -317,7 +376,7 @@ const Interventions = () => {
         </nav>
 
         <section aria-label="Interventions list" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-          {interventions.map(({ id, title, icon: Icon, summary, steps }) => (
+          {filteredInterventions.map(({ id, title, icon: Icon, summary, steps }) => (
             <article key={id} id={id} className="scroll-mt-24">
               <Card className="shadow-therapy animate-fade-in hover-scale">
                 <CardHeader className="flex flex-row items-center gap-3">
