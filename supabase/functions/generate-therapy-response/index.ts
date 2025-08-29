@@ -95,7 +95,7 @@ serve(async (req) => {
         'X-Title': 'Therapy Chat Assistant'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'deepseek/deepseek-chat',
         messages,
         max_tokens: context?.sessionType === 'realtime' ? 150 : 300,
         temperature: 0.7,

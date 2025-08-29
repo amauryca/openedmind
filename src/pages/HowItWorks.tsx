@@ -43,9 +43,9 @@ const HowItWorks: React.FC = () => {
               <CardTitle>AI & Backend</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>AI responses are generated using Claude 3.5 Sonnet through OpenRouter API.</p>
+              <p>AI responses are generated using DeepSeek V3.1 through OpenRouter API.</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Model: Anthropic Claude 3.5 Sonnet</li>
+                <li>Model: DeepSeek V3.1 Chat</li>
                 <li>Age-aware prompts and empathetic replies</li>
                 <li>Secure API communication via Supabase Edge Functions</li>
               </ul>
