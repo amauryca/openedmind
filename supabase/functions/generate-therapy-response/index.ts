@@ -62,11 +62,11 @@ serve(async (req) => {
     
     if (isWelcome) {
       const welcomeInstructions = {
-        'child': 'Create a warm, brief welcome for a child starting therapy.',
-        'teen': 'Create a genuine, concise welcome for a teenager.',
-        'young-adult': 'Create a brief welcoming message for a young adult.',
-        'adult': 'Create a professional but warm, brief welcome for an adult.',
-        'senior': 'Create a respectful, concise welcome for an older adult.'
+        'child': 'Create a simple, warm welcome that says hello and asks how they are feeling.',
+        'teen': 'Create a brief, friendly welcome that asks how they are doing today.',
+        'young-adult': 'Create a general welcome that asks what brings them here today.',
+        'adult': 'Create a professional but warm welcome that asks how they are feeling.',
+        'senior': 'Create a respectful welcome that asks how they are doing today.'
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
