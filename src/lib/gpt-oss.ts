@@ -19,7 +19,7 @@ const initializeGPTOSS = async () => {
       // Try WebGPU first with a supported model
       gptOssGenerator = await pipeline(
         "text-generation",
-        "onnx-community/gpt2",
+        "Xenova/gpt2",
         { 
           device: "webgpu",
           dtype: "fp16"
@@ -31,7 +31,7 @@ const initializeGPTOSS = async () => {
       try {
         gptOssGenerator = await pipeline(
           "text-generation",
-          "onnx-community/gpt2",
+          "Xenova/gpt2",
           { device: "wasm" }
         );
         console.log('Text generation model initialized with WASM');
@@ -40,7 +40,7 @@ const initializeGPTOSS = async () => {
         try {
           gptOssGenerator = await pipeline(
             "text-generation",
-            "onnx-community/distilgpt2",
+            "Xenova/distilgpt2",
             { device: "wasm" }
           );
           console.log('DistilGPT-2 model initialized');
