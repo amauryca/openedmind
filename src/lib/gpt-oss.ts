@@ -212,7 +212,7 @@ export const generateWelcomeMessage = async (age: string): Promise<string> => {
   const start = performance.now?.() ?? Date.now();
   
   try {
-    console.log('Generating welcome message with conversation model');
+    console.log('Generating welcome message with text generation model');
     
     const generator = await initializeGPTOSS();
     const prompt = createWelcomePrompt(age);
