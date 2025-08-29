@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 import { Helmet } from "react-helmet-async";
-import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote } from "lucide-react";
+import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target } from "lucide-react";
 
 const Interventions = () => {
   const canonical = useMemo(() => `${window.location.origin}/interventions`, []);
@@ -156,6 +156,110 @@ const Interventions = () => {
         "Practice 5 rounds of 4‑7‑8 breathing",
         "Stretch neck, shoulders, and back for 3 minutes",
         "List 3 tasks for tomorrow to offload the mind",
+      ],
+    },
+    {
+      id: "stop-technique",
+      title: "STOP Technique",
+      icon: StopCircle,
+      summary: "Emergency grounding for overwhelming moments using 4 quick steps.",
+      steps: [
+        "Stop: Pause whatever you're doing",
+        "Take a breath: One deep, slow breath",
+        "Observe: Notice thoughts, feelings, and body sensations without judgment",
+        "Proceed: Choose your next step mindfully",
+        "Use when feeling overwhelmed, angry, or about to react impulsively"
+      ],
+    },
+    {
+      id: "loving-kindness",
+      title: "Loving-Kindness Meditation",
+      icon: Heart,
+      summary: "Build self-compassion and emotional resilience through kind wishes.",
+      steps: [
+        "Start with yourself: 'May I be happy, may I be healthy, may I be at peace'",
+        "Extend to someone you love: 'May you be happy, may you be healthy, may you be at peace'",
+        "Include someone neutral: a stranger or acquaintance",
+        "If ready, include someone difficult",
+        "End by sending kindness to all beings everywhere"
+      ],
+    },
+    {
+      id: "values-clarification",
+      title: "Values Clarification",
+      icon: Compass,
+      summary: "Connect with your core values to guide decisions and find motivation.",
+      steps: [
+        "List 5-10 things that matter most to you (family, creativity, justice, etc.)",
+        "Choose your top 3 values from this list",
+        "For each value, write one sentence about why it matters to you",
+        "Identify one small action you can take today to honor one of these values",
+        "Notice how connecting with values affects your mood and clarity"
+      ],
+    },
+    {
+      id: "worry-time",
+      title: "Scheduled Worry Time",
+      icon: Clock,
+      summary: "Contain anxiety by designating specific time for worries.",
+      steps: [
+        "Set aside 15-20 minutes daily at the same time for worrying",
+        "When worries arise outside this time, write them down and save for worry time",
+        "During worry time, review your list and allow yourself to worry fully",
+        "For each worry, ask: 'Is this within my control?' and 'What action can I take?'",
+        "End worry time by engaging in a pleasant or grounding activity"
+      ],
+    },
+    {
+      id: "cold-water-reset",
+      title: "Cold Water Reset",
+      icon: Snowflake,
+      summary: "Use temperature change to quickly calm intense emotions and reset.",
+      steps: [
+        "Hold cold water or ice cubes in your hands for 30 seconds",
+        "Splash cold water on your face and wrists",
+        "Take slow, deep breaths while feeling the cold sensation",
+        "Notice how the temperature shift affects your emotional intensity",
+        "Use when emotions feel overwhelming or out of control"
+      ],
+    },
+    {
+      id: "tipp-technique",
+      title: "TIPP (DBT Crisis Skills)",
+      icon: Zap,
+      summary: "Four rapid techniques to change body chemistry and reduce crisis intensity.",
+      steps: [
+        "Temperature: Hold ice or splash cold water on face",
+        "Intense exercise: Do jumping jacks or run in place for 10 minutes",
+        "Paced breathing: Exhale longer than you inhale (4 in, 6 out)",
+        "Paired muscle relaxation: Tense and release muscle groups",
+        "Use when emotions are 7/10 or higher in intensity"
+      ],
+    },
+    {
+      id: "mindful-walking",
+      title: "Mindful Walking",
+      icon: TreePine,
+      summary: "Combine movement with mindfulness to ground yourself in the present.",
+      steps: [
+        "Walk slowly, focusing on the sensation of your feet touching the ground",
+        "Notice the rhythm of your steps and coordinate with your breathing",
+        "Observe your surroundings with fresh eyes - colors, sounds, textures",
+        "When your mind wanders, gently return attention to walking",
+        "Walk for 5-10 minutes, either indoors or outside"
+      ],
+    },
+    {
+      id: "emotion-wheel",
+      title: "Emotional Check-In Wheel",
+      icon: Target,
+      summary: "Identify and process emotions using a systematic approach.",
+      steps: [
+        "Rate your current emotion intensity from 1-10",
+        "Name the primary emotion you're feeling (sad, angry, anxious, etc.)",
+        "Identify any secondary emotions underneath (hurt under anger, fear under sadness)",
+        "Ask: 'What does this emotion need right now?' (comfort, action, expression)",
+        "Choose one small step to honor what the emotion is telling you"
       ],
     },
   ];
