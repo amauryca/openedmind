@@ -19,32 +19,22 @@ const initializeGPTOSS = async () => {
   if (!gptOssGenerator) {
     try {
       console.log('Initializing DistilGPT-2 model...');
-      // Use DistilGPT-2 as it has all required ONNX files available
-      try {
-        console.log('Attempting WebGPU initialization...');
-        gptOssGenerator = await pipeline(
-          "text-generation",
-          "Xenova/distilgpt2",
-          { 
-            device: "webgpu",
-            dtype: "fp16"
-          }
-        );
-        console.log('DistilGPT-2 model initialized with WebGPU');
-      } catch (webgpuError) {
-        console.warn("WebGPU not available, falling back to WASM:", webgpuError);
-        gptOssGenerator = await pipeline(
-          "text-generation",
-          "Xenova/distilgpt2",
-          { 
-            device: "wasm",
-            dtype: "q8"
-          }
-        );
-        console.log('DistilGPT-2 model initialized with WASM');
-      }
+      
+      // Always try WASM first as it's more reliable
+      console.log('Using WASM device for better compatibility...');
+      gptOssGenerator = await pipeline(
+        "text-generation",
+        "Xenova/distilgpt2",
+        { 
+          device: "wasm",
+          dtype: "q8"
+        }
+      );
+      console.log('DistilGPT-2 model initialized successfully with WASM');
+      
     } catch (error) {
-      console.error('DistilGPT-2 failed to initialize:', error);
+      console.error('Failed to initialize DistilGPT-2:', error);
+      // Don't try any other models - just fail gracefully and use fallback responses
       throw new Error('Unable to initialize conversation model');
     }
   }
