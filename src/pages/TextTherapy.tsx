@@ -31,6 +31,7 @@ const TextTherapy = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [sessionEnded, setSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -95,7 +96,7 @@ const TextTherapy = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || sessionEnded) return;
 
     // Validate input
     const validation = securityManager.validateInput(inputMessage);
@@ -172,6 +173,10 @@ const TextTherapy = () => {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleEndSession = () => {
+    setSessionEnded(true);
   };
 
   return (
@@ -263,8 +268,8 @@ const TextTherapy = () => {
                     </Badge>
                   </div>
                   <Button 
-                    onClick={() => setSessionActive(false)}
-                    variant="outline"
+                    onClick={handleEndSession}
+                    variant="destructive"
                     size="sm"
                   >
                     End Session
@@ -284,72 +289,93 @@ const TextTherapy = () => {
               <CardContent>
                 {/* Messages */}
                 <div ref={chatContainerRef} className="h-96 overflow-y-auto bg-gradient-calm rounded-lg p-4 mb-4 space-y-4 scroll-smooth">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-4 shadow-gentle animate-slide-in ${
-                          message.type === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-white/90 text-foreground'
-                        }`}
+                  {sessionEnded ? (
+                    <div className="text-center text-muted-foreground p-8">
+                      <h3 className="text-lg font-semibold mb-2">Session Ended</h3>
+                      <p>Thank you for using our therapy service. Take care of yourself.</p>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setSessionEnded(false);
+                          setMessages([]);
+                        }}
+                        className="mt-4"
                       >
-                        <div className="flex items-center gap-2 mb-2">
-                          {message.type === 'user' ? (
-                            <User className="h-4 w-4" />
-                          ) : (
-                            <Bot className="h-4 w-4" />
-                          )}
-                          <span className="text-xs font-semibold">
-                            {message.type === 'user' ? 'You' : 'AI Therapist'}
-                          </span>
-                          <span className="text-xs opacity-70">
-                            {message.timestamp.toLocaleTimeString()}
-                          </span>
-                        </div>
-                        <p className="text-sm leading-relaxed">{message.content}</p>
-                      </div>
+                        Start New Session
+                      </Button>
                     </div>
-                  ))}
-                  
-                  {isTyping && (
-                    <div className="flex justify-start">
-                      <div className="bg-white/90 rounded-lg p-4 shadow-gentle">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Bot className="h-4 w-4" />
-                          <span className="text-xs font-semibold">AI Therapist</span>
+                  ) : (
+                    <>
+                      {messages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[80%] rounded-lg p-4 shadow-gentle animate-slide-in ${
+                              message.type === 'user'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-white/90 text-foreground'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 mb-2">
+                              {message.type === 'user' ? (
+                                <User className="h-4 w-4" />
+                              ) : (
+                                <Bot className="h-4 w-4" />
+                              )}
+                              <span className="text-xs font-semibold">
+                                {message.type === 'user' ? 'You' : 'AI Therapist'}
+                              </span>
+                              <span className="text-xs opacity-70">
+                                {message.timestamp.toLocaleTimeString()}
+                              </span>
+                            </div>
+                            <p className="text-sm leading-relaxed">{message.content}</p>
+                          </div>
                         </div>
-                        <div className="animate-pulse-soft text-sm text-muted-foreground">
-                          Typing...
+                      ))}
+                      
+                      {isTyping && !sessionEnded && (
+                        <div className="flex justify-start">
+                          <div className="bg-white/90 rounded-lg p-4 shadow-gentle">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Bot className="h-4 w-4" />
+                              <span className="text-xs font-semibold">AI Therapist</span>
+                            </div>
+                            <div className="animate-pulse-soft text-sm text-muted-foreground">
+                              Typing...
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      )}
+                    </>
                   )}
                   <div ref={messagesEndRef} />
                 </div>
 
                 {/* Input Area */}
-                <div className="flex gap-2">
-                  <Textarea
-                    placeholder="Share your thoughts and feelings here..."
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="flex-1 min-h-[60px] resize-none"
-                    disabled={isTyping}
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    variant="therapy"
-                    size="lg"
-                    disabled={!inputMessage.trim() || isTyping}
-                    className="h-[60px]"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
+                {!sessionEnded && (
+                  <div className="flex gap-2">
+                    <Textarea
+                      placeholder="Share your thoughts and feelings here..."
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="flex-1 min-h-[60px] resize-none"
+                      disabled={isTyping}
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      variant="therapy"
+                      size="lg"
+                      disabled={!inputMessage.trim() || isTyping}
+                      className="h-[60px]"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

@@ -18,11 +18,11 @@ interface TherapyContext {
 
 const createSystemPrompt = (context: TherapyContext): string => {
   const systemInstructions = {
-    'child': 'You are a caring child therapist. Use simple, warm language. Keep responses brief and encouraging.',
-    'teen': 'You are a teen therapist. Be relatable and non-judgmental. Keep responses concise and supportive.',
-    'young-adult': 'You are a therapist for young adults. Be empathetic and practical. Keep responses focused.',
-    'adult': 'You are a professional therapist. Use evidence-based approaches. Keep responses clear and helpful.',
-    'senior': 'You are a respectful therapist for older adults. Honor their experience. Keep responses thoughtful but brief.'
+    'child': 'You are a caring child therapist. Use simple, warm language. Keep responses under 20 words.',
+    'teen': 'You are a teen therapist. Be relatable and supportive. Keep responses under 25 words.',
+    'young-adult': 'You are a therapist for young adults. Be empathetic and practical. Keep responses under 30 words.',
+    'adult': 'You are a professional therapist. Use evidence-based approaches. Keep responses under 30 words.',
+    'senior': 'You are a respectful therapist for older adults. Honor their experience. Keep responses under 30 words.'
   };
 
   const systemRole = systemInstructions[context.age as keyof typeof systemInstructions] || systemInstructions.adult;
@@ -32,7 +32,15 @@ const createSystemPrompt = (context: TherapyContext): string => {
     emotionalContext = `\n\nThe client appears to be feeling ${context.mood || 'unknown'} and their emotional state seems ${context.emotion || 'neutral'}. Please acknowledge these feelings appropriately.`;
   }
 
-  return `${systemRole}${emotionalContext}\n\nProvide a brief, helpful response that validates feelings and offers guidance. Keep it concise.`;
+  const coreInstructions = `
+CRITICAL RULES - NEVER BREAK THESE:
+1. You are ONLY a therapist. Do not discuss other topics.
+2. If asked about non-therapy topics, redirect: "Let's focus on your feelings and wellbeing."
+3. For inappropriate content, respond: "I'm here to support your mental health in a safe space."
+4. Keep responses therapeutic, empathetic, and under the word limit.
+5. Always guide back to emotional wellbeing and self-reflection.`;
+
+  return `${systemRole}${emotionalContext}${coreInstructions}\n\nProvide a brief, therapeutic response that validates feelings. Stay strictly within your role as a therapist.`;
 };
 
 serve(async (req) => {
@@ -97,7 +105,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'deepseek/deepseek-chat',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 100 : 150,
+        max_tokens: context?.sessionType === 'realtime' ? 50 : 80,
         temperature: 0.5,
         top_p: 0.8,
         frequency_penalty: 0.1,
