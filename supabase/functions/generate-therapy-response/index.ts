@@ -126,10 +126,19 @@ serve(async (req) => {
       throw new Error('No response generated');
     }
 
-    console.log('Response generated successfully:', generatedText.substring(0, 100) + '...');
+    // Clean up the response by removing any formatting and unwanted text
+    const cleanedResponse = generatedText
+      .replace(/\*\*Therapist\*\*[:\s]*/gi, '') // Remove **Therapist:** or **Therapist**
+      .replace(/^Therapist[:\s]*/gi, '') // Remove "Therapist:" at start
+      .replace(/\*\*[^*]*\*\*/g, '') // Remove any other **bold** formatting
+      .replace(/^["\s]+|["\s]+$/g, '') // Remove quotes and whitespace at start/end
+      .replace(/^[^a-zA-Z]*/, '') // Remove any non-letter characters at start
+      .trim();
+
+    console.log('Response generated successfully:', cleanedResponse.substring(0, 100) + '...');
 
     return new Response(JSON.stringify({ 
-      response: generatedText.trim(),
+      response: cleanedResponse,
       success: true 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
