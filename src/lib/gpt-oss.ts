@@ -16,34 +16,34 @@ const initializeGPTOSS = async () => {
   if (!gptOssGenerator) {
     try {
       console.log('Initializing text generation model...');
-      // Try WebGPU first with a supported model
+      // Try WebGPU first with DistilGPT-2 (has model files available)
       gptOssGenerator = await pipeline(
         "text-generation",
-        "Xenova/gpt2",
+        "Xenova/distilgpt2",
         { 
           device: "webgpu",
           dtype: "fp16"
         }
       );
-      console.log('Text generation model initialized with WebGPU');
+      console.log('DistilGPT-2 model initialized with WebGPU');
     } catch (error) {
       console.warn("WebGPU not available, falling back to WASM");
       try {
         gptOssGenerator = await pipeline(
           "text-generation",
-          "Xenova/gpt2",
+          "Xenova/distilgpt2",
           { device: "wasm" }
         );
-        console.log('Text generation model initialized with WASM');
+        console.log('DistilGPT-2 model initialized with WASM');
       } catch (wasmError) {
-        console.warn('GPT-2 failed, trying DistilGPT-2:', wasmError);
+        console.warn('DistilGPT-2 failed, trying GPT-2:', wasmError);
         try {
           gptOssGenerator = await pipeline(
             "text-generation",
-            "Xenova/distilgpt2",
+            "Xenova/gpt2",
             { device: "wasm" }
           );
-          console.log('DistilGPT-2 model initialized');
+          console.log('GPT-2 model initialized as fallback');
         } catch (finalError) {
           console.error('All models failed to initialize:', finalError);
           throw new Error('Unable to initialize any conversation model');
