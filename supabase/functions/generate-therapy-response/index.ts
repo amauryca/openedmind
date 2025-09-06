@@ -103,13 +103,11 @@ serve(async (req) => {
         'X-Title': 'Therapy Chat Assistant'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-chat',
+        model: 'anthropic/claude-3-5-haiku-20241022',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 50 : 80,
-        temperature: 0.5,
-        top_p: 0.8,
-        frequency_penalty: 0.1,
-        presence_penalty: 0.1
+        max_tokens: context?.sessionType === 'realtime' ? 30 : 50,
+        temperature: 0.3,
+        top_p: 0.9
       }),
     });
 
