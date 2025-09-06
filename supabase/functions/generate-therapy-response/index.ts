@@ -62,11 +62,11 @@ serve(async (req) => {
     
     if (isWelcome) {
       const welcomeInstructions = {
-        'child': 'Create a simple, warm welcome that says hello and asks how they are feeling.',
-        'teen': 'Create a brief, friendly welcome that asks how they are doing today.',
-        'young-adult': 'Create a general welcome that asks what brings them here today.',
-        'adult': 'Create a professional but warm welcome that asks how they are feeling.',
-        'senior': 'Create a respectful welcome that asks how they are doing today.'
+        'child': 'Create a simple, warm welcome. Introduce yourself as "OpenedMind" and ask how they are feeling.',
+        'teen': 'Create a brief, friendly welcome. Introduce yourself as "OpenedMind" and ask how they are doing today.',
+        'young-adult': 'Create a general welcome. Introduce yourself as "OpenedMind" and ask what brings them here today.',
+        'adult': 'Create a professional but warm welcome. Introduce yourself as "OpenedMind" and ask how they are feeling.',
+        'senior': 'Create a respectful welcome. Introduce yourself as "OpenedMind" and ask how they are doing today.'
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
@@ -74,7 +74,7 @@ serve(async (req) => {
       messages = [
         {
           role: "system",
-          content: `You are a professional therapist meeting a new client for the first time. ${instruction}`
+          content: `You are a professional therapist named "OpenedMind" meeting a new client for the first time. ${instruction} Keep it brief and welcoming.`
         },
         {
           role: "user",
