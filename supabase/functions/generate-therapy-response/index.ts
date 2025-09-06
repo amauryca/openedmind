@@ -105,8 +105,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'google/gemma-2-9b-it:free',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 25 : 40,
-        temperature: 0.2,
+        max_tokens: context?.sessionType === 'realtime' ? 80 : 120,
+        temperature: 0.3,
         top_p: 0.9
       }),
     });
