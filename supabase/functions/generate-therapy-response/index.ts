@@ -103,10 +103,10 @@ serve(async (req) => {
         'X-Title': 'Therapy Chat Assistant'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-5-haiku-20241022',
+        model: 'google/gemma-2-9b-it:free',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 30 : 50,
-        temperature: 0.3,
+        max_tokens: context?.sessionType === 'realtime' ? 25 : 40,
+        temperature: 0.2,
         top_p: 0.9
       }),
     });
