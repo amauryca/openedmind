@@ -1,0 +1,81 @@
+{
+  "name": "OpenedMind - AI Therapy Platform",
+  "short_name": "OpenedMind",
+  "description": "AI-powered emotional intelligence therapy platform for mental health support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fffe",
+  "theme_color": "#4da6e0",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["health", "medical", "lifestyle"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Real-Time Therapy",
+      "short_name": "Real-Time",
+      "description": "Start a real-time therapy session with video and voice",
+      "url": "/realtime-therapy",
+      "icons": [
+        {
+          "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Text Therapy",
+      "short_name": "Text",
+      "description": "Begin a text-based therapy conversation",
+      "url": "/text-therapy",
+      "icons": [
+        {
+          "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Interventions",
+      "short_name": "Tools",
+      "description": "Browse therapeutic interventions and exercises",
+      "url": "/interventions",
+      "icons": [
+        {
+          "src": "/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/4691a25a-1e82-4570-b467-83df3d715fb1.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Main therapy interface"
+    }
+  ],
+  "prefer_related_applications": false
+}
