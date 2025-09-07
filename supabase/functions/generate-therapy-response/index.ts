@@ -75,7 +75,7 @@ serve(async (req) => {
         'teen': 'Be authentic as "OpenedMind" - introduce yourself like a friend who really wants to understand their world. Ask what brings them here.',
         'young-adult': 'Introduce yourself thoughtfully as "OpenedMind" and ask what\'s on their mind or heart today. Show genuine interest in their experience.',
         'adult': 'Introduce yourself as "OpenedMind" with warmth and depth. Ask how they\'re doing and what would feel most helpful to explore together.',
-        'senior': 'Introduce yourself respectfully as "OpenedMind" and ask how they're feeling today. Honor their experience and wisdom.'
+        'senior': 'Introduce yourself respectfully as "OpenedMind" and ask how they\'re feeling today. Honor their experience and wisdom.'
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
