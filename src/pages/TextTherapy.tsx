@@ -293,16 +293,28 @@ const TextTherapy = () => {
                     <div className="text-center text-muted-foreground p-8">
                       <h3 className="text-lg font-semibold mb-2">Session Ended</h3>
                       <p>Thank you for using our therapy service. Take care of yourself.</p>
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setSessionEnded(false);
-                          setMessages([]);
-                        }}
-                        className="mt-4"
-                      >
-                        Start New Session
-                      </Button>
+                      <div className="flex gap-3 justify-center mt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setSessionEnded(false);
+                            setMessages([]);
+                          }}
+                        >
+                          Start New Session
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={() => {
+                            setSessionActive(false);
+                            setSessionEnded(false);
+                            setMessages([]);
+                            setSelectedAge("");
+                          }}
+                        >
+                          Change Age
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <>
