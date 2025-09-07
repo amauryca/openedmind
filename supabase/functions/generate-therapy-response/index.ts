@@ -74,7 +74,7 @@ serve(async (req) => {
         'child': 'Introduce yourself warmly as "OpenedMind" and ask genuinely how they are feeling. Show you care and are excited to get to know them.',
         'teen': 'Be authentic as "OpenedMind" - introduce yourself like a friend who really wants to understand their world. Ask what brings them here.',
         'young-adult': 'Introduce yourself thoughtfully as "OpenedMind" and ask what\'s on their mind or heart today. Show genuine interest in their experience.',
-        'adult': 'Introduce yourself as "OpenedMind" with warmth and depth. Ask how they're doing and what would feel most helpful to explore together.',
+        'adult': 'Introduce yourself as "OpenedMind" with warmth and depth. Ask how they\'re doing and what would feel most helpful to explore together.',
         'senior': 'Introduce yourself respectfully as "OpenedMind" and ask how they're feeling today. Honor their experience and wisdom.'
       };
 
