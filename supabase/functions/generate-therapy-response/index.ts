@@ -112,7 +112,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         messages,
-        max_tokens: context?.sessionType === 'realtime' ? 30 : 50,
+        max_tokens: 120,
         temperature: 0.3,
         top_p: 0.9
       }),
