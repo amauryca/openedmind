@@ -209,11 +209,11 @@ const TextTherapy = () => {
                     <SelectValue placeholder="Select age range" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="child">Child (5-12 years)</SelectItem>
+                    <SelectItem value="child">Child (6-12 years)</SelectItem>
                     <SelectItem value="teen">Teen (13-17 years)</SelectItem>
                     <SelectItem value="young-adult">Young Adult (18-25 years)</SelectItem>
-                    <SelectItem value="adult">Adult (26-45 years)</SelectItem>
-                    <SelectItem value="senior">Senior (45+ years)</SelectItem>
+                    <SelectItem value="adult">Adult (26-64 years)</SelectItem>
+                    <SelectItem value="senior">Senior (65+ years)</SelectItem>
                   </SelectContent>
                 </Select>
                 
