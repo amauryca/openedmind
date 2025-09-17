@@ -112,7 +112,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         messages,
-        max_tokens: 120,
+        max_tokens: 150,
         temperature: 0.3,
         top_p: 0.9
       }),
@@ -131,14 +131,26 @@ serve(async (req) => {
       throw new Error('No response generated');
     }
 
-    // Clean up the response by removing any formatting and unwanted text
-    const cleanedResponse = generatedText
+    // Clean up the response and ensure complete sentences
+    let cleanedResponse = generatedText
       .replace(/\*\*Therapist\*\*[:\s]*/gi, '') // Remove **Therapist:** or **Therapist**
       .replace(/^Therapist[:\s]*/gi, '') // Remove "Therapist:" at start
       .replace(/\*\*[^*]*\*\*/g, '') // Remove any other **bold** formatting
       .replace(/^["\s]+|["\s]+$/g, '') // Remove quotes and whitespace at start/end
       .replace(/^[^a-zA-Z]*/, '') // Remove any non-letter characters at start
       .trim();
+
+    // Ensure the response ends with proper punctuation for complete sentences
+    if (cleanedResponse && !cleanedResponse.match(/[.!?]$/)) {
+      // Find the last complete sentence
+      const lastSentenceMatch = cleanedResponse.match(/^(.*[.!?])/);
+      if (lastSentenceMatch) {
+        cleanedResponse = lastSentenceMatch[1].trim();
+      } else {
+        // If no complete sentence found, add a period
+        cleanedResponse = cleanedResponse + '.';
+      }
+    }
 
     console.log('Response generated successfully:', cleanedResponse.substring(0, 100) + '...');
 
