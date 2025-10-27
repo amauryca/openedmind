@@ -324,16 +324,16 @@ const Interventions = () => {
 
       <main className="container max-w-6xl mx-auto px-4 py-10">
         <header className="mx-auto text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-foreground">Therapeutic Interventions & Exercises</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground">Empathetical Interventions & Exercises</h1>
           <p className="text-sm md:text-lg text-muted-foreground mt-3">
             Evidence-based tools you can use anytime to calm, think clearly, and self-support.
           </p>
           <div className="mt-5 md:mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3">
-            <Button variant="therapy" size="sm" className="md:size-auto" onClick={() => (window.location.href = "/realtime-therapy")}>
-              <Video className="h-4 w-4 mr-2" /> Real-Time Therapy
+            <Button variant="empathy" size="sm" className="md:size-auto" onClick={() => (window.location.href = "/realtime-support")}>
+              <Video className="h-4 w-4 mr-2" /> Real-Time Support
             </Button>
-            <Button variant="calm" size="sm" className="md:size-auto" onClick={() => (window.location.href = "/text-therapy")}>
-              <MessageCircle className="h-4 w-4 mr-2" /> Text Therapy
+            <Button variant="calm" size="sm" className="md:size-auto" onClick={() => (window.location.href = "/text-support")}>
+              <MessageCircle className="h-4 w-4 mr-2" /> Text Support
             </Button>
           </div>
         </header>
@@ -378,7 +378,7 @@ const Interventions = () => {
         <section aria-label="Interventions list" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredInterventions.map(({ id, title, icon: Icon, summary, steps }) => (
             <article key={id} id={id} className="scroll-mt-24">
-              <Card className="shadow-therapy animate-fade-in hover-scale">
+              <Card className="shadow-empathy animate-fade-in hover-scale">
                 <CardHeader className="flex flex-row items-center gap-3">
                   <div className="p-2 rounded-md bg-gradient-primary text-white">
                     <Icon className="h-5 w-5" />
