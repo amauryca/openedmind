@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export interface TherapyContext {
+export interface SupportContext {
   age: string;
   sessionType: 'realtime' | 'text';
   mood?: string;
@@ -8,12 +8,12 @@ export interface TherapyContext {
   previousMessages?: string[];
 }
 
-export const generateTherapyResponse = async (
+export const generateSupportResponse = async (
   userMessage: string,
-  context: TherapyContext
+  context: SupportContext
 ): Promise<string> => {
   try {
-    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
+    const { data, error } = await supabase.functions.invoke('generate-support-response', {
       body: { 
         userMessage: userMessage.trim(),
         context,
@@ -49,7 +49,7 @@ export const generateTherapyResponse = async (
 
 export const generateWelcomeMessage = async (age: string): Promise<string> => {
   try {
-    const { data, error } = await supabase.functions.invoke('generate-therapy-response', {
+    const { data, error } = await supabase.functions.invoke('generate-support-response', {
       body: { 
         userMessage: '',
         context: { age, sessionType: 'text' },

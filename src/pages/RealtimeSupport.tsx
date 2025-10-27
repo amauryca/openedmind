@@ -7,10 +7,10 @@ import { Mic, MicOff, Video, VideoOff, Pause, Play } from "lucide-react";
 import NavBar from "@/components/NavBar";
 import EmergencyModal from "@/components/EmergencyModal";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
-import { useRealtimeTherapy } from "@/hooks/useRealtimeTherapy";
+import { useRealtimeSupport } from "@/hooks/useRealtimeSupport";
 import SystemStatus from "@/components/SystemStatus";
 
-const RealtimeTherapy: React.FC = () => {
+const RealtimeSupport: React.FC = () => {
   const {
     videoRef,
     selectedAge,
@@ -31,11 +31,11 @@ const RealtimeTherapy: React.FC = () => {
     toggleCamera,
     simulateUserInput,
     closeEmergency,
-  } = useRealtimeTherapy();
+  } = useRealtimeSupport();
 
   // Basic SEO tags for this page
   useEffect(() => {
-    document.title = "Real-Time Therapy | openedmind.org";
+    document.title = "Real-Time Empathetical Support | openedmind.org";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       const m = document.createElement("meta");
@@ -44,7 +44,7 @@ const RealtimeTherapy: React.FC = () => {
       document.head.appendChild(m);
     } else {
       (metaDesc as HTMLMetaElement).content =
-        "Real-time empathical session with face and voice analysis and instant AI responses.";
+        "Real-time empathetical session with face and voice analysis and instant AI responses.";
     }
   }, []);
 
@@ -64,7 +64,7 @@ const RealtimeTherapy: React.FC = () => {
           {/* Video + Controls */}
           <div className="space-y-4 lg:space-y-6">
             {/* Age Selection */}
-            <Card className="shadow-therapy animate-slide-in">
+            <Card className="shadow-empathy animate-slide-in">
               <CardHeader>
                 <CardTitle className="text-xl">Age Range</CardTitle>
               </CardHeader>
@@ -85,7 +85,7 @@ const RealtimeTherapy: React.FC = () => {
             </Card>
 
             {/* Video Feed */}
-            <Card className="shadow-therapy animate-slide-in">
+            <Card className="shadow-empathy animate-slide-in">
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Video className="h-5 w-5" />
@@ -128,7 +128,7 @@ const RealtimeTherapy: React.FC = () => {
             {/* Controls */}
             <div className="flex flex-wrap justify-center gap-2 lg:gap-4">
               {!sessionActive ? (
-                <Button onClick={handleStartSession} variant="therapy" size="lg" className="min-w-[180px] lg:min-w-[200px]">
+                <Button onClick={handleStartSession} variant="empathy" size="lg" className="min-w-[180px] lg:min-w-[200px]">
                   <Play className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
                   Start Session
                 </Button>
@@ -177,7 +177,7 @@ const RealtimeTherapy: React.FC = () => {
           {/* Chat + Analysis */}
           <div className="space-y-4 lg:space-y-6">
             {/* Conversation */}
-            <Card className="shadow-therapy animate-slide-in flex-1">
+            <Card className="shadow-empathy animate-slide-in flex-1">
               <CardHeader>
                 <CardTitle className="text-xl">AI Empathetical Conversation</CardTitle>
               </CardHeader>
@@ -251,7 +251,7 @@ const RealtimeTherapy: React.FC = () => {
             </Card>
 
             {/* Session Insights */}
-            <Card className="shadow-therapy animate-slide-in">
+            <Card className="shadow-empathy animate-slide-in">
               <CardHeader>
                 <CardTitle className="text-xl">Session Insights</CardTitle>
               </CardHeader>
@@ -294,7 +294,7 @@ const RealtimeTherapy: React.FC = () => {
             <CardContent className="p-4 lg:p-6 text-center">
               <Badge className="h-6 w-6 lg:h-8 lg:w-8 mx-auto mb-2 lg:mb-3 text-primary flex items-center justify-center text-xs">AI</Badge>
               <h3 className="font-semibold text-sm lg:text-base mb-1 lg:mb-2">Instant AI Response</h3>
-              <p className="text-xs lg:text-sm text-muted-foreground">Immediate, age-appropriate therapeutic responses</p>
+              <p className="text-xs lg:text-sm text-muted-foreground">Immediate, age-appropriate empathetical responses</p>
             </CardContent>
           </Card>
         </div>
@@ -310,4 +310,4 @@ const RealtimeTherapy: React.FC = () => {
   );
 };
 
-export default RealtimeTherapy;
+export default RealtimeSupport;

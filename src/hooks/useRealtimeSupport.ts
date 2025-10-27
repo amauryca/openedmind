@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { TherapyContext, generateTherapyResponse, generateWelcomeMessage } from "@/lib/therapyApi";
+import { SupportContext, generateSupportResponse, generateWelcomeMessage } from "@/lib/supportApi";
 import { initializeFaceDetection, initializeVoiceEmotionAnalysis, speakText, speechAPI } from "@/lib/apis";
 import { detectEmergency } from "@/utils/emergencyDetection";
 import { securityManager } from "@/lib/security";
@@ -12,7 +12,7 @@ export interface ConversationMessage {
   timestamp: Date;
 }
 
-interface UseRealtimeTherapyReturn {
+interface UseRealtimeSupportReturn {
   // Refs
   videoRef: React.RefObject<HTMLVideoElement>;
   // UI state
@@ -37,7 +37,7 @@ interface UseRealtimeTherapyReturn {
   simulateUserInput: (input: string) => void;
 }
 
-export const useRealtimeTherapy = (): UseRealtimeTherapyReturn => {
+export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
   const { toast } = useToast();
 
   // UI STATE
@@ -247,7 +247,7 @@ export const useRealtimeTherapy = (): UseRealtimeTherapyReturn => {
         setConversations((p) => [...p, userMsg]);
 
         // generate AI
-        const ctx: TherapyContext = {
+        const ctx: SupportContext = {
           age: selectedAge,
           sessionType: "realtime",
           mood: currentMood || "neutral",
@@ -256,7 +256,7 @@ export const useRealtimeTherapy = (): UseRealtimeTherapyReturn => {
         };
 
         addLog("Generating AI response...");
-        const aiText = await generateTherapyResponse(input, ctx);
+        const aiText = await generateSupportResponse(input, ctx);
         addLog("AI responded: " + aiText);
 
         const aiMsg: ConversationMessage = {

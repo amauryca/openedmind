@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { usePageTransition } from "@/hooks/usePageTransition";
 import Index from "./pages/Index";
-import RealtimeTherapy from "./pages/RealtimeTherapy";
-import TextTherapy from "./pages/TextTherapy";
+import RealtimeSupport from "./pages/RealtimeSupport";
+import TextSupport from "./pages/TextSupport";
 import NotFound from "./pages/NotFound";
 import Interventions from "./pages/Interventions";
 import HowItWorks from "./pages/HowItWorks";
@@ -21,8 +21,8 @@ const AppRoutes = () => {
     <div className={`min-h-screen transition-all duration-200 ease-out ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/realtime-therapy" element={<RealtimeTherapy />} />
-        <Route path="/text-therapy" element={<TextTherapy />} />
+        <Route path="/realtime-support" element={<RealtimeSupport />} />
+        <Route path="/text-support" element={<TextSupport />} />
         <Route path="/interventions" element={<Interventions />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

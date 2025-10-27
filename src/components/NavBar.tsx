@@ -42,24 +42,24 @@ const NavBar = () => {
             )}
             
             <Button 
-              onClick={() => navigate("/realtime-therapy")}
-              variant={location.pathname === "/realtime-therapy" ? "therapy" : "outline"}
+              onClick={() => navigate("/realtime-support")}
+              variant={location.pathname === "/realtime-support" ? "empathy" : "outline"}
               size="sm"
                className="hidden lg:inline-flex text-xs md:text-sm"
             >
               <Video className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden sm:inline">Video Therapy</span>
+              <span className="hidden sm:inline">Video Support</span>
               <span className="sm:hidden">Video</span>
             </Button>
             
             <Button 
-              onClick={() => navigate("/text-therapy")}
-              variant={location.pathname === "/text-therapy" ? "calm" : "outline"}
+              onClick={() => navigate("/text-support")}
+              variant={location.pathname === "/text-support" ? "calm" : "outline"}
               size="sm"
                className="hidden lg:inline-flex text-xs md:text-sm"
             >
               <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden sm:inline">Text Therapy</span>
+              <span className="hidden sm:inline">Text Support</span>
               <span className="sm:hidden">Text</span>
             </Button>
 
@@ -102,13 +102,13 @@ const NavBar = () => {
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Button variant={location.pathname === "/realtime-therapy" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/realtime-therapy")}>
-                      <Video className="h-4 w-4 mr-2" /> Real-Time Therapy
+                    <Button variant={location.pathname === "/realtime-support" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/realtime-support")}>
+                      <Video className="h-4 w-4 mr-2" /> Real-Time Support
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Button variant={location.pathname === "/text-therapy" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/text-therapy")}>
-                      <MessageCircle className="h-4 w-4 mr-2" /> Text Therapy
+                    <Button variant={location.pathname === "/text-support" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/text-support")}>
+                      <MessageCircle className="h-4 w-4 mr-2" /> Text Support
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>

@@ -8,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface TherapyContext {
+interface SupportContext {
   age: string;
   sessionType: 'realtime' | 'text';
   mood?: string;
@@ -16,7 +16,7 @@ interface TherapyContext {
   previousMessages?: string[];
 }
 
-const createSystemPrompt = (context: TherapyContext): string => {
+const createSystemPrompt = (context: SupportContext): string => {
   const systemInstructions = {
     'child': 'You are OpenedMind, a warm and caring friend who helps kids understand their feelings. Speak like a kind older sibling who really listens. Use simple words but show genuine care.',
     'teen': 'You are OpenedMind, a supportive companion who truly gets what teens go through. Be authentic, relatable, and show real empathy. Speak naturally like someone who genuinely cares.',
@@ -43,13 +43,13 @@ CONVERSATION APPROACH:
 - Acknowledge the courage it takes to share feelings
 - Sometimes just sit with their emotions without rushing to fix
 
-THERAPEUTIC BOUNDARIES:
+SUPPORTIVE BOUNDARIES:
 - Stay focused on emotional wellbeing and self-discovery
 - If they discuss other topics, gently redirect: "I'm curious how that connects to what you're feeling inside?"
 - For concerning content: "I care about your safety. Let's talk about getting you proper support."
 - Be human-like but maintain professional care`;
 
-  return `${systemRole}${emotionalContext}${coreInstructions}\n\nRespond as someone who genuinely cares and wants to understand their experience. Be thoughtful, warm, and authentically human while maintaining therapeutic purpose.`;
+  return `${systemRole}${emotionalContext}${coreInstructions}\n\nRespond as someone who genuinely cares and wants to understand their experience. Be thoughtful, warm, and authentically human while maintaining supportive purpose.`;
 };
 
 serve(async (req) => {
@@ -60,7 +60,7 @@ serve(async (req) => {
   try {
     const { userMessage, context, isWelcome } = await req.json();
 
-    console.log('Generating therapy response:', { 
+    console.log('Generating empathetical response:', { 
       age: context?.age, 
       sessionType: context?.sessionType,
       isWelcome,
@@ -133,8 +133,8 @@ serve(async (req) => {
 
     // Clean up the response and ensure complete sentences
     let cleanedResponse = generatedText
-      .replace(/\*\*Therapist\*\*[:\s]*/gi, '') // Remove **Therapist:** or **Therapist**
-      .replace(/^Therapist[:\s]*/gi, '') // Remove "Therapist:" at start
+      .replace(/\*\*Support\*\*[:\s]*/gi, '') // Remove **Support:** or **Support**
+      .replace(/^Support[:\s]*/gi, '') // Remove "Support:" at start
       .replace(/\*\*[^*]*\*\*/g, '') // Remove any other **bold** formatting
       .replace(/^["\s]+|["\s]+$/g, '') // Remove quotes and whitespace at start/end
       .replace(/^[^a-zA-Z]*/, '') // Remove any non-letter characters at start
@@ -162,7 +162,7 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error('Error in generate-therapy-response function:', error);
+    console.error('Error in generate-support-response function:', error);
     
     // Fallback responses
     const fallbacks = {

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Send, MessageCircle, User, Bot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { generateTherapyResponse, generateWelcomeMessage, TherapyContext } from "@/lib/therapyApi";
+import { generateSupportResponse, generateWelcomeMessage, SupportContext } from "@/lib/supportApi";
 import { useToast } from "@/hooks/use-toast";
 import NavBar from "@/components/NavBar";
 import EmergencyModal from "@/components/EmergencyModal";
@@ -22,7 +22,7 @@ interface Message {
   timestamp: Date;
 }
 
-const TextTherapy = () => {
+const TextSupport = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedAge, setSelectedAge] = useState<string>("");
@@ -128,15 +128,15 @@ const TextTherapy = () => {
     setIsTyping(true);
 
     try {
-      // Prepare context for therapy API
-      const context: TherapyContext = {
+      // Prepare context for support API
+      const context: SupportContext = {
         age: selectedAge,
         sessionType: 'text',
         previousMessages: messages.slice(-6).map(m => m.content) // Last 6 messages for context
       };
 
-      // Generate AI response using OpenRouter
-      const aiContent = await generateTherapyResponse(currentInput, context);
+      // Generate AI response
+      const aiContent = await generateSupportResponse(currentInput, context);
       
       const aiMessage: Message = {
         id: messages.length + 2,
@@ -196,7 +196,7 @@ const TextTherapy = () => {
         {!sessionActive ? (
           /* Setup Screen */
           <div className="max-w-md mx-auto">
-            <Card className="shadow-therapy animate-slide-in">
+            <Card className="shadow-empathy animate-slide-in">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Start Your Online Session</CardTitle>
                 <p className="text-muted-foreground">
@@ -219,7 +219,7 @@ const TextTherapy = () => {
                 
                 <Button 
                   onClick={handleStartSession}
-                  variant="therapy"
+                  variant="empathy"
                   size="lg"
                   className="w-full"
                   disabled={!selectedAge}
@@ -279,7 +279,7 @@ const TextTherapy = () => {
             </Card>
 
             {/* Chat Area */}
-            <Card className="shadow-therapy">
+            <Card className="shadow-empathy">
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
@@ -337,7 +337,7 @@ const TextTherapy = () => {
                                 <Bot className="h-4 w-4" />
                               )}
                               <span className="text-xs font-semibold">
-                                {message.type === 'user' ? 'You' : 'AI Therapist'}
+                                {message.type === 'user' ? 'You' : 'AI Companion'}
                               </span>
                               <span className="text-xs opacity-70">
                                 {message.timestamp.toLocaleTimeString()}
@@ -353,7 +353,7 @@ const TextTherapy = () => {
                           <div className="bg-white/90 rounded-lg p-4 shadow-gentle">
                             <div className="flex items-center gap-2 mb-2">
                               <Bot className="h-4 w-4" />
-                              <span className="text-xs font-semibold">AI Therapist</span>
+                              <span className="text-xs font-semibold">AI Companion</span>
                             </div>
                             <div className="animate-pulse-soft text-sm text-muted-foreground">
                               Typing...
@@ -379,7 +379,7 @@ const TextTherapy = () => {
                     />
                     <Button
                       onClick={handleSendMessage}
-                      variant="therapy"
+                      variant="empathy"
                       size="lg"
                       disabled={!inputMessage.trim() || isTyping}
                       className="h-[60px]"
@@ -406,4 +406,4 @@ const TextTherapy = () => {
   );
 };
 
-export default TextTherapy;
+export default TextSupport;

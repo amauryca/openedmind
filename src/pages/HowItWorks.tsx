@@ -12,7 +12,7 @@ const HowItWorks: React.FC = () => {
     <div className="min-h-screen bg-gradient-calm">
       <Helmet>
         <title>openedmind.org: How it works – AI Flow</title>
-        <meta name="description" content="Learn how openedmind.org works: real-time and text therapy, AI responses, safety, and privacy." />
+        <meta name="description" content="Learn how openedmind.org works: real-time and text-based empathetical support, AI responses, safety, and privacy." />
         <link rel="canonical" href={canonical} />
       </Helmet>
       <NavBar />
@@ -20,11 +20,11 @@ const HowItWorks: React.FC = () => {
       <main className="container mx-auto px-4 py-10 max-w-5xl">
         <header className="text-center mb-10">
           <h1 className="text-3xl md:text-5xl font-bold text-foreground">How openedmind.org Works</h1>
-          <p className="text-lg text-muted-foreground mt-3">End-to-end flow of our age-adaptive AI therapy experience</p>
+          <p className="text-lg text-muted-foreground mt-3">End-to-end flow of our age-adaptive AI empathetical support experience</p>
         </header>
 
         <section className="grid gap-6 md:grid-cols-2 mb-10">
-          <Card className="shadow-therapy">
+          <Card className="shadow-empathy">
             <CardHeader>
               <CardTitle>Frontend (Your Browser)</CardTitle>
             </CardHeader>
@@ -38,7 +38,7 @@ const HowItWorks: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-therapy">
+          <Card className="shadow-empathy">
             <CardHeader>
               <CardTitle>AI & Backend</CardTitle>
             </CardHeader>
@@ -59,15 +59,15 @@ const HowItWorks: React.FC = () => {
             <CardContent>
               <p className="text-sm text-muted-foreground mb-3 animate-fade-in">Choose your modality:</p>
               <div className="flex flex-wrap gap-2">
-                <Link to="/realtime-therapy"><Button variant="outline" size="sm">Real-Time</Button></Link>
-                <Link to="/text-therapy"><Button variant="outline" size="sm">Text</Button></Link>
+                <Link to="/realtime-support"><Button variant="outline" size="sm">Real-Time</Button></Link>
+                <Link to="/text-support"><Button variant="outline" size="sm">Text</Button></Link>
                 <Link to="/interventions"><Button variant="outline" size="sm">Interventions</Button></Link>
               </div>
             </CardContent>
           </Card>
           <Card className="shadow-gentle">
             <CardHeader><CardTitle>2) Converse</CardTitle></CardHeader>
-            <CardContent className="text-sm text-muted-foreground">Your inputs are validated and optionally analyzed (voice/face). The Edge Function generates an empathetic, age-adaptive response.</CardContent>
+            <CardContent className="text-sm text-muted-foreground">Your inputs are validated and optionally analyzed (voice/face). The Edge Function generates an empathetical, age-adaptive response.</CardContent>
           </Card>
           <Card className="shadow-gentle">
             <CardHeader><CardTitle>3) Safety & Privacy</CardTitle></CardHeader>
@@ -81,13 +81,13 @@ const HowItWorks: React.FC = () => {
             <li>User message or speech recognized in the browser.</li>
             <li>Input sanitized and checked for emergencies.</li>
             <li>Supabase Edge Function invoked with context (age, recent messages).</li>
-            <li>Google AI returns the crafted therapeutic response.</li>
+            <li>Google AI returns the crafted empathetical response.</li>
             <li>Response rendered, spoken (optional), and session continues.</li>
           </ol>
         </article>
 
         <div className="mt-10 text-center">
-          <Link to="/text-therapy"><Button variant="therapy">Begin Text Session</Button></Link>
+          <Link to="/text-support"><Button variant="empathy">Begin Text Session</Button></Link>
         </div>
       </main>
 

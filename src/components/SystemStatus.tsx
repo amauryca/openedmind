@@ -83,7 +83,7 @@ const SystemStatus: React.FC<SystemStatusProps> = ({ sessionType, listening, aiR
       </div>
 
       {open && (
-        <Card id="system-status-panel" className="w-80 shadow-therapy">
+        <Card id="system-status-panel" className="w-80 shadow-empathy">
           <CardHeader className="py-3">
             <CardTitle className="text-base">System Status</CardTitle>
           </CardHeader>

@@ -47,13 +47,13 @@ Mind</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-in">
-              <Button onClick={() => navigate("/realtime-therapy")} variant="therapy" size="lg" className="text-lg px-8 py-6">
+              <Button onClick={() => navigate("/realtime-support")} variant="empathy" size="lg" className="text-lg px-8 py-6">
                 <Video className="h-6 w-6 mr-3" />
-                Start Real-Time Therapy
+                Start Real-Time Support
               </Button>
-              <Button onClick={() => navigate("/text-therapy")} variant="calm" size="lg" className="text-lg px-8 py-6">
+              <Button onClick={() => navigate("/text-support")} variant="calm" size="lg" className="text-lg px-8 py-6">
                 <MessageCircle className="h-6 w-6 mr-3" />
-                Begin Text Therapy
+                Begin Text Support
               </Button>
             </div>
           </div>
@@ -65,17 +65,17 @@ Mind</span>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Advanced Therapeutic Technology
+              Advanced Empathetical Technology
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Our AI empathetic companion combines multiple advanced technologies to provide personalized, 
+              Our AI empathetical companion combines multiple advanced technologies to provide personalized, 
               age-appropriate mental health support in real-time.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Intelligent Analysis */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Brain className="h-8 w-8 text-white" />
@@ -85,13 +85,13 @@ Mind</span>
               <CardContent className="text-center">
                 <p className="text-muted-foreground">
                   Advanced AI-powered emotional intelligence that understands context 
-                  and provides meaningful therapeutic insights.
+                  and provides meaningful empathetical insights.
                 </p>
               </CardContent>
             </Card>
 
             {/* Age-Adaptive AI */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Heart className="h-8 w-8 text-white" />
@@ -107,7 +107,7 @@ Mind</span>
             </Card>
 
             {/* Multilingual Support */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Globe className="h-8 w-8 text-white" />
@@ -123,7 +123,7 @@ Mind</span>
             </Card>
 
             {/* Privacy & Security */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Shield className="h-8 w-8 text-white" />
@@ -139,7 +139,7 @@ Mind</span>
             </Card>
 
             {/* Voice Recognition */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Mic className="h-8 w-8 text-white" />
@@ -155,7 +155,7 @@ Mind</span>
             </Card>
 
             {/* AI Responses */}
-            <Card className="shadow-therapy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
+            <Card className="shadow-empathy hover:shadow-glow hover:scale-105 transition-all duration-300 ease-out group scroll-reveal">
               <CardHeader className="text-center">
                 <div className="mx-auto mb-4 p-3 bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center group-hover:animate-float transform-gpu">
                   <Bot className="h-8 w-8 text-white" />
@@ -186,18 +186,18 @@ Mind</span>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Real-Time Therapy Card */}
-            <Card className="shadow-therapy hover:scale-105 transition-bounce scroll-reveal card-hover">
+            {/* Real-Time Support Card */}
+            <Card className="shadow-empathy hover:scale-105 transition-bounce scroll-reveal card-hover">
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-gradient-primary rounded-full w-20 h-20 flex items-center justify-center">
                   <Video className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl">Real-Time Therapy</CardTitle>
+                <CardTitle className="text-2xl">Real-Time Support</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Experience cutting-edge therapy with live facial analysis, voice emotion detection, 
-                  and real-time AI responses. Perfect for immersive therapeutic-like sessions.
+                  Experience cutting-edge empathetical support with live facial analysis, voice emotion detection, 
+                  and real-time AI responses. Perfect for immersive supportive sessions.
                 </p>
                 
                 <div className="space-y-2">
@@ -207,14 +207,14 @@ Mind</span>
                   <Badge variant="secondary">🔊 Text-to-Speech</Badge>
                 </div>
 
-                <Button onClick={() => navigate("/realtime-therapy")} variant="therapy" size="lg" className="w-full mt-6">
+                <Button onClick={() => navigate("/realtime-support")} variant="empathy" size="lg" className="w-full mt-6">
                   Start Real-Time Session
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Text Therapy Card */}
-            <Card className="shadow-therapy hover:scale-105 transition-bounce scroll-reveal card-hover">
+            {/* Text Support Card */}
+            <Card className="shadow-empathy hover:scale-105 transition-bounce scroll-reveal card-hover">
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-gradient-primary rounded-full w-20 h-20 flex items-center justify-center">
                   <MessageCircle className="h-10 w-10 text-white" />
@@ -223,7 +223,7 @@ Mind</span>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Traditional chat-based therapy with advanced AI. Perfect for those who prefer 
+                  Traditional chat-based empathetical support with advanced AI. Perfect for those who prefer 
                   written communication and thoughtful, reflective conversations.
                 </p>
                 
@@ -234,7 +234,7 @@ Mind</span>
                   <Badge variant="secondary">🔒 Private & Secure</Badge>
                 </div>
 
-                <Button onClick={() => navigate("/text-therapy")} variant="calm" size="lg" className="w-full mt-6">
+                <Button onClick={() => navigate("/text-support")} variant="calm" size="lg" className="w-full mt-6">
                   Begin Text Session
                 </Button>
               </CardContent>
