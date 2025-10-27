@@ -68,7 +68,7 @@ const TextTherapy = () => {
       console.error('Error generating welcome message:', error);
       toast({
         title: "Connection Error",
-        description: "Failed to connect to AI therapist. Please try again.",
+        description: "Failed to connect to AI Empathetic Bot. Please try again.",
         variant: "destructive"
       });
       // Fallback to default message
@@ -86,10 +86,10 @@ const TextTherapy = () => {
 
   const getDefaultWelcomeMessage = (ageGroup: string) => {
     const messages = {
-      "child": "Hi there! I'm your friendly AI helper. I'm here to listen and help you feel better. Would you like to tell me about your day? Remember, it's okay to feel different emotions - that's totally normal!",
-      "teen": "Hey! I'm your AI therapist, and I'm here to support you. I know being a teenager can be really tough sometimes with school, friends, and all the changes happening. What's been on your mind lately?",
+      "child": "Hi there! I'm your Opened Mind. I'm here to listen and help you feel better. Would you like to tell me about your day? Remember, it's okay to feel different emotions - that's totally normal!",
+      "teen": "Hey! I'm Opened Mind, and I'm here to support you. I know being a teenager can be really tough sometimes with school, friends, and all the changes happening. What's been on your mind lately?",
       "young-adult": "Hello! I'm here to provide you with a safe space to talk about anything that's bothering you. Young adulthood brings unique challenges - career decisions, relationships, independence. What would you like to discuss today?",
-      "adult": "Welcome to your therapy session. I'm here to listen and provide support as you navigate life's complexities. Whether it's work stress, relationships, family, or personal growth, we can explore whatever is important to you right now.",
+      "adult": "Welcome to your empathetical session. I'm here to listen and provide support as you navigate life's complexities. Whether it's work stress, relationships, family, or personal growth, we can explore whatever is important to you right now.",
       "senior": "Good day! I'm honored to be here with you today. Life brings so much wisdom and experience, along with its own unique challenges. I'm here to listen and support you through whatever you'd like to share."
     };
     return messages[ageGroup as keyof typeof messages] || messages.adult;
@@ -186,10 +186,10 @@ const TextTherapy = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Text-Based Therapy Session
+            Text-Based Session
           </h1>
           <p className="text-xl text-muted-foreground">
-            Thoughtful conversations with your AI therapeutic companion
+            Thoughtful conversations with your AI companion
           </p>
         </div>
 
@@ -198,7 +198,7 @@ const TextTherapy = () => {
           <div className="max-w-md mx-auto">
             <Card className="shadow-therapy animate-slide-in">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Start Your Therapy Session</CardTitle>
+                <CardTitle className="text-2xl">Start Your Online Session</CardTitle>
                 <p className="text-muted-foreground">
                   Choose your age for personalized support
                 </p>
@@ -225,7 +225,7 @@ const TextTherapy = () => {
                   disabled={!selectedAge}
                 >
                   <MessageCircle className="h-5 w-5 mr-2" />
-                  Begin Therapy Session
+                  Begin Session
                 </Button>
               </CardContent>
             </Card>
@@ -237,7 +237,7 @@ const TextTherapy = () => {
                   <Bot className="h-8 w-8 mx-auto mb-3 text-primary" />
                   <h3 className="font-semibold mb-2">AI-Powered Support</h3>
                   <p className="text-sm text-muted-foreground">
-                    Advanced AI technology provides personalized therapeutic responses
+                    Advanced AI technology provides personalized & immersive responses
                   </p>
                 </CardContent>
               </Card>
@@ -283,7 +283,7 @@ const TextTherapy = () => {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
-                  Therapy Conversation
+                  Empathetical Conversation
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -292,7 +292,7 @@ const TextTherapy = () => {
                   {sessionEnded ? (
                     <div className="text-center text-muted-foreground p-8">
                       <h3 className="text-lg font-semibold mb-2">Session Ended</h3>
-                      <p>Thank you for using our therapy service. Take care of yourself.</p>
+                      <p>Thank you for using our service. Take care of yourself.</p>
                       <div className="flex gap-3 justify-center mt-4">
                         <Button
                           variant="outline"

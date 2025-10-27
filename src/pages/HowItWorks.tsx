@@ -11,7 +11,7 @@ const HowItWorks: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-calm">
       <Helmet>
-        <title>openedmind.org: How it works – AI Therapy Flow</title>
+        <title>openedmind.org: How it works – AI Flow</title>
         <meta name="description" content="Learn how openedmind.org works: real-time and text therapy, AI responses, safety, and privacy." />
         <link rel="canonical" href={canonical} />
       </Helmet>
@@ -31,8 +31,8 @@ const HowItWorks: React.FC = () => {
             <CardContent className="space-y-2 text-sm text-muted-foreground">
               <p>Built with React + Vite + Tailwind. No server render, fully client-side.</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Real-Time Therapy: optional camera/microphone for live analysis.</li>
-                <li>Text Therapy: chat interface with safe input handling.</li>
+                <li>Real-Time Session: optional camera/microphone for live analysis.</li>
+                <li>Text Session: chat interface with safe input handling.</li>
                 <li>Safety: emergency keyword detection and input validation.</li>
               </ul>
             </CardContent>
@@ -87,7 +87,7 @@ const HowItWorks: React.FC = () => {
         </article>
 
         <div className="mt-10 text-center">
-          <Link to="/text-therapy"><Button variant="therapy">Begin Text Therapy</Button></Link>
+          <Link to="/text-therapy"><Button variant="therapy">Begin Text Session</Button></Link>
         </div>
       </main>
 

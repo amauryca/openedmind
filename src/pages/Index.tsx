@@ -43,7 +43,7 @@ Mind</span>
             </div>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-slide-in">
-              Advanced therapeutic AI with personalized conversations and emotional intelligence.
+              Advanced empathetic AI with personalized conversations and emotional intelligence.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-in">
@@ -68,7 +68,7 @@ Mind</span>
               Advanced Therapeutic Technology
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Our AI therapist combines multiple advanced technologies to provide personalized, 
+              Our AI empathetic companion combines multiple advanced technologies to provide personalized, 
               age-appropriate mental health support in real-time.
             </p>
           </div>
@@ -100,7 +100,7 @@ Mind</span>
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-muted-foreground">
-                  Personalized therapeutic approach that adapts communication style 
+                  Personalized empathetic approach that adapts communication style 
                   and methods based on your age and needs.
                 </p>
               </CardContent>
@@ -149,7 +149,7 @@ Mind</span>
               <CardContent className="text-center">
                 <p className="text-muted-foreground">
                   Advanced speech recognition with emotional tone analysis 
-                  for deeper therapeutic understanding.
+                  for deeper empathetic understanding.
                 </p>
               </CardContent>
             </Card>
@@ -178,7 +178,7 @@ Mind</span>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Choose Your Therapy Experience
+              Choose Your Empathetical Experience
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Select the therapy format that best suits your comfort level and needs.
@@ -197,7 +197,7 @@ Mind</span>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
                   Experience cutting-edge therapy with live facial analysis, voice emotion detection, 
-                  and real-time AI responses. Perfect for immersive therapeutic sessions.
+                  and real-time AI responses. Perfect for immersive therapeutic-like sessions.
                 </p>
                 
                 <div className="space-y-2">
@@ -219,7 +219,7 @@ Mind</span>
                 <div className="mx-auto mb-4 p-4 bg-gradient-primary rounded-full w-20 h-20 flex items-center justify-center">
                   <MessageCircle className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl">Text-Based Therapy</CardTitle>
+                <CardTitle className="text-2xl">Text-Based Session</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">

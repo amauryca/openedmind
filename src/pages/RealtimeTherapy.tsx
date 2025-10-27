@@ -40,11 +40,11 @@ const RealtimeTherapy: React.FC = () => {
     if (!metaDesc) {
       const m = document.createElement("meta");
       m.name = "description";
-      m.content = "Real-time therapy session with face and voice analysis and instant AI responses.";
+      m.content = "Real-time empathetical session with face and voice analysis and instant AI responses.";
       document.head.appendChild(m);
     } else {
       (metaDesc as HTMLMetaElement).content =
-        "Real-time therapy session with face and voice analysis and instant AI responses.";
+        "Real-time empathical session with face and voice analysis and instant AI responses.";
     }
   }, []);
 
@@ -54,7 +54,7 @@ const RealtimeTherapy: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Real-Time Therapy Session</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Real-Time Empathetical Session</h1>
           <p className="text-xl text-muted-foreground">
             AI-powered emotional intelligence with live facial and voice analysis
           </p>
@@ -179,7 +179,7 @@ const RealtimeTherapy: React.FC = () => {
             {/* Conversation */}
             <Card className="shadow-therapy animate-slide-in flex-1">
               <CardHeader>
-                <CardTitle className="text-xl">AI Therapist Conversation</CardTitle>
+                <CardTitle className="text-xl">AI Empathetical Conversation</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-48 lg:h-64 bg-gradient-calm rounded-lg p-3 lg:p-4 overflow-y-auto">
@@ -219,7 +219,7 @@ const RealtimeTherapy: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-center text-muted-foreground py-8">
-                      <p>Start a session to begin your therapy conversation</p>
+                      <p>Start a session to begin your empathetical conversation</p>
                     </div>
                   )}
                 </div>
