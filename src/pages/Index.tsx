@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Video, MessageCircle, Brain, Heart, Globe, Shield, Mic, Bot } from "lucide-react";
 import heroImage from "@/assets/therapy-hero.jpg";
 import therapyOffice from "@/assets/therapy-office.jpg";
+import mastLogo from "@/assets/mast-logo.jpg";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import NavBar from "@/components/NavBar";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
@@ -246,13 +247,26 @@ Mind</span>
       <DisclaimerFooter />
 
       {/* Footer */}
-      <footer className="py-12 bg-primary/5">
+      <footer className="py-12 bg-primary/5 relative">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold text-foreground mb-4">openedmind.org</h3>
           <p className="text-muted-foreground mb-6">
             Empowering emotional intelligence through advanced AI technology
           </p>
           <p className="text-sm text-muted-foreground">© 2025 Amaury Castillo-Acevedo. All rights reserved. | Your emotional well-being matters.</p>
+          
+          {/* Easter Egg - MAST Logo */}
+          <div 
+            onClick={() => navigate("/dedication")}
+            className="absolute bottom-4 right-4 w-8 h-8 opacity-10 hover:opacity-100 transition-opacity duration-300 cursor-pointer group"
+            title="🥚"
+          >
+            <img 
+              src={mastLogo} 
+              alt="" 
+              className="w-full h-full rounded-full group-hover:scale-110 transition-transform duration-300"
+            />
+          </div>
         </div>
       </footer>
     </div>;

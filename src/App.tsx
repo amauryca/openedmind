@@ -10,6 +10,7 @@ import TextSupport from "./pages/TextSupport";
 import NotFound from "./pages/NotFound";
 import Interventions from "./pages/Interventions";
 import HowItWorks from "./pages/HowItWorks";
+import Dedication from "./pages/Dedication";
 import { HelmetProvider } from "react-helmet-async";
 import { FeedbackPopup } from "@/components/FeedbackPopup";
 
@@ -26,6 +27,7 @@ const AppRoutes = () => {
         <Route path="/text-support" element={<TextSupport />} />
         <Route path="/interventions" element={<Interventions />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/dedication" element={<Dedication />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
