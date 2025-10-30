@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Interventions from "./pages/Interventions";
 import HowItWorks from "./pages/HowItWorks";
 import { HelmetProvider } from "react-helmet-async";
+import { FeedbackPopup } from "@/components/FeedbackPopup";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <FeedbackPopup />
         <Router basename={import.meta.env.DEV ? "/" : "/"}>
           <AppRoutes />
         </Router>
