@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import mastLogo from "@/assets/mast-logo.jpg";
+import { SnakeGame } from "@/components/SnakeGame";
 
 const Dedication = () => {
   const navigate = useNavigate();
@@ -40,6 +41,10 @@ const Dedication = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-border/50 pt-8">
+          <SnakeGame />
         </div>
 
         <Button 
