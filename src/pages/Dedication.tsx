@@ -23,7 +23,9 @@ const Dedication = () => {
           <div className="space-y-6 text-lg text-muted-foreground">
             <p className="leading-relaxed">
               This project is dedicated to my family and friends, whose unwavering support 
-              and encouragement have made this journey possible.
+              and encouragement have made this journey possible, and to{" "}
+              <span className="font-medium text-foreground">MAST (Maritime & Science Technology High School)</span>, 
+              an institution that fosters innovation and excellence.
             </p>
             
             <div className="pt-4 border-t border-border/50">
