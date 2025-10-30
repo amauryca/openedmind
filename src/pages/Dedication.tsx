@@ -43,10 +43,6 @@ const Dedication = () => {
           </div>
         </div>
 
-        <div className="border-t border-border/50 pt-8">
-          <SnakeGame />
-        </div>
-
         <Button 
           onClick={() => navigate("/")} 
           variant="outline"
@@ -54,6 +50,10 @@ const Dedication = () => {
         >
           Return Home
         </Button>
+
+        <div className="border-t border-border/50 pt-8 w-full">
+          <SnakeGame />
+        </div>
       </div>
     </div>
   );

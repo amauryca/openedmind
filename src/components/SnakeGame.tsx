@@ -11,6 +11,9 @@ export const SnakeGame = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const snakeRef = useRef<Position[]>([{ x: 10, y: 10 }]);
+  const velocityRef = useRef({ x: 1, y: 0 });
+  const foodRef = useRef<Position>({ x: 15, y: 15 });
 
   useEffect(() => {
     if (!gameStarted) return;
@@ -23,21 +26,25 @@ export const SnakeGame = () => {
 
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
-
-    let snake: Position[] = [{ x: 10, y: 10 }];
-    let velocity = { x: 0, y: 0 };
-    let food: Position = { x: 15, y: 15 };
     let gameLoop: number;
 
-    const getComputedColor = (variable: string) => {
-      return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+    // Reset game state
+    snakeRef.current = [{ x: 10, y: 10 }];
+    velocityRef.current = { x: 1, y: 0 };
+    foodRef.current = {
+      x: Math.floor(Math.random() * tileCount),
+      y: Math.floor(Math.random() * tileCount),
     };
 
     const drawGame = () => {
       if (!ctx || !canvas) return;
 
-      // Clear canvas with background color
-      ctx.fillStyle = `hsl(${getComputedColor('--background')})`;
+      const snake = snakeRef.current;
+      const velocity = velocityRef.current;
+      const food = foodRef.current;
+
+      // Clear canvas
+      ctx.fillStyle = "#0a0a0a";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Move snake
@@ -59,65 +66,73 @@ export const SnakeGame = () => {
         }
       }
 
-      snake.unshift(head);
+      snakeRef.current = [head, ...snake];
 
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
         setScore((prev) => prev + 1);
-        food = {
+        foodRef.current = {
           x: Math.floor(Math.random() * tileCount),
           y: Math.floor(Math.random() * tileCount),
         };
       } else {
-        snake.pop();
+        snakeRef.current.pop();
       }
 
-      // Draw snake
-      snake.forEach((segment, index) => {
+      // Draw snake with gradient
+      snakeRef.current.forEach((segment, index) => {
+        // Create gradient from purple to blue
         const gradient = ctx.createLinearGradient(
           segment.x * gridSize,
           segment.y * gridSize,
           (segment.x + 1) * gridSize,
           (segment.y + 1) * gridSize
         );
-        gradient.addColorStop(0, `hsl(${getComputedColor('--primary')})`);
-        gradient.addColorStop(1, `hsl(${getComputedColor('--primary-glow')})`);
+        gradient.addColorStop(0, "#8B5CF6");
+        gradient.addColorStop(1, "#3B82F6");
         
         ctx.fillStyle = gradient;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#8B5CF6";
         ctx.fillRect(
           segment.x * gridSize + 1,
           segment.y * gridSize + 1,
           gridSize - 2,
           gridSize - 2
         );
+        ctx.shadowBlur = 0;
       });
 
       // Draw food
-      ctx.fillStyle = `hsl(${getComputedColor('--accent')})`;
+      ctx.fillStyle = "#F59E0B";
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "#F59E0B";
       ctx.beginPath();
       ctx.arc(
-        food.x * gridSize + gridSize / 2,
-        food.y * gridSize + gridSize / 2,
+        foodRef.current.x * gridSize + gridSize / 2,
+        foodRef.current.y * gridSize + gridSize / 2,
         gridSize / 2 - 2,
         0,
         Math.PI * 2
       );
       ctx.fill();
+      ctx.shadowBlur = 0;
     };
 
     const handleKeyPress = (e: KeyboardEvent) => {
+      const velocity = velocityRef.current;
       switch (e.key) {
         case "ArrowUp":
-          if (velocity.y === 0) velocity = { x: 0, y: -1 };
+          if (velocity.y === 0) velocityRef.current = { x: 0, y: -1 };
           break;
         case "ArrowDown":
-          if (velocity.y === 0) velocity = { x: 0, y: 1 };
+          if (velocity.y === 0) velocityRef.current = { x: 0, y: 1 };
           break;
         case "ArrowLeft":
-          if (velocity.x === 0) velocity = { x: -1, y: 0 };
+          if (velocity.x === 0) velocityRef.current = { x: -1, y: 0 };
           break;
         case "ArrowRight":
-          if (velocity.x === 0) velocity = { x: 1, y: 0 };
+          if (velocity.x === 0) velocityRef.current = { x: 1, y: 0 };
           break;
       }
     };
