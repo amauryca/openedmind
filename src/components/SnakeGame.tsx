@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import timCheese from "@/assets/tim-cheese.jpg";
 
 interface Position {
   x: number;
@@ -79,28 +80,22 @@ export const SnakeGame = () => {
         snakeRef.current.pop();
       }
 
-      // Draw snake with gradient
+      // Load and draw Tim Cheese image for snake
+      const img = new Image();
+      img.src = timCheese;
+      
       snakeRef.current.forEach((segment, index) => {
-        // Create gradient from purple to blue
-        const gradient = ctx.createLinearGradient(
-          segment.x * gridSize,
-          segment.y * gridSize,
-          (segment.x + 1) * gridSize,
-          (segment.y + 1) * gridSize
-        );
-        gradient.addColorStop(0, "#8B5CF6");
-        gradient.addColorStop(1, "#3B82F6");
-        
-        ctx.fillStyle = gradient;
+        ctx.save();
         ctx.shadowBlur = 10;
         ctx.shadowColor = "#8B5CF6";
-        ctx.fillRect(
-          segment.x * gridSize + 1,
-          segment.y * gridSize + 1,
-          gridSize - 2,
-          gridSize - 2
+        ctx.drawImage(
+          img,
+          segment.x * gridSize,
+          segment.y * gridSize,
+          gridSize,
+          gridSize
         );
-        ctx.shadowBlur = 0;
+        ctx.restore();
       });
 
       // Draw food
@@ -123,15 +118,19 @@ export const SnakeGame = () => {
       const velocity = velocityRef.current;
       switch (e.key) {
         case "ArrowUp":
+          e.preventDefault();
           if (velocity.y === 0) velocityRef.current = { x: 0, y: -1 };
           break;
         case "ArrowDown":
+          e.preventDefault();
           if (velocity.y === 0) velocityRef.current = { x: 0, y: 1 };
           break;
         case "ArrowLeft":
+          e.preventDefault();
           if (velocity.x === 0) velocityRef.current = { x: -1, y: 0 };
           break;
         case "ArrowRight":
+          e.preventDefault();
           if (velocity.x === 0) velocityRef.current = { x: 1, y: 0 };
           break;
       }
