@@ -17,7 +17,7 @@ const NavBar = () => {
           >
             <div className="relative">
             <img 
-              src="/lovable-uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png" 
+              src="/uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png" 
               alt="openedmind.org" 
               className="w-10 h-10 rounded-lg shadow-md hover:scale-110 transition-transform duration-300"
             />
