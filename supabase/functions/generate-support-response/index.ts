@@ -63,7 +63,8 @@ serve(async (req) => {
       age: context?.age, 
       sessionType: context?.sessionType,
       isWelcome,
-      messageLength: userMessage?.length 
+      messageLength: userMessage?.length,
+      previousMessagesCount: context?.previousMessages?.length || 0
     });
 
     let messages;
@@ -90,16 +91,32 @@ serve(async (req) => {
         }
       ];
     } else {
+      // Build messages array with conversation history
       messages = [
         {
           role: "system",
           content: createSystemPrompt(context)
-        },
-        {
-          role: "user",
-          content: userMessage
         }
       ];
+
+      // Add conversation history if available
+      if (context?.previousMessages && context.previousMessages.length > 0) {
+        // Convert previous messages to alternating user/assistant format
+        // Assuming messages alternate between user and AI
+        for (let i = 0; i < context.previousMessages.length; i++) {
+          const role = i % 2 === 0 ? "assistant" : "user"; // First message is AI welcome, so starts with assistant
+          messages.push({
+            role: role,
+            content: context.previousMessages[i]
+          });
+        }
+      }
+
+      // Add current user message
+      messages.push({
+        role: "user",
+        content: userMessage
+      });
     }
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
