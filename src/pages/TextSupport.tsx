@@ -296,9 +296,32 @@ const TextSupport = () => {
                       <div className="flex gap-3 justify-center mt-4">
                         <Button
                           variant="outline"
-                          onClick={() => {
+                          onClick={async () => {
                             setSessionEnded(false);
                             setMessages([]);
+                            setIsTyping(true);
+                            
+                            try {
+                              const welcomeContent = await generateWelcomeMessage(selectedAge);
+                              const welcomeMessage: Message = {
+                                id: 1,
+                                type: "ai",
+                                content: welcomeContent,
+                                timestamp: new Date()
+                              };
+                              setMessages([welcomeMessage]);
+                            } catch (error) {
+                              console.error('Error generating welcome message:', error);
+                              const welcomeMessage: Message = {
+                                id: 1,
+                                type: "ai",
+                                content: getDefaultWelcomeMessage(selectedAge),
+                                timestamp: new Date()
+                              };
+                              setMessages([welcomeMessage]);
+                            } finally {
+                              setIsTyping(false);
+                            }
                           }}
                         >
                           Start New Session
