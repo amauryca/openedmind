@@ -29,7 +29,7 @@ export const FeedbackPopup = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
+    <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
       <Card className="w-80 shadow-lg border-border">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
