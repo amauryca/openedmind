@@ -43,9 +43,8 @@ const HowItWorks: React.FC = () => {
               <CardTitle>AI & Backend</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>AI responses are generated using DeepSeek V3.1 through OpenRouter API.</p>
+              <p>AI responses are generated using Gemini 2.5 Flash</p>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Model: DeepSeek V3.1 Chat</li>
                 <li>Age-aware prompts and empathetic replies</li>
                 <li>Secure API communication via Supabase Edge Functions</li>
               </ul>
