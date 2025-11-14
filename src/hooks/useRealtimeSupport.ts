@@ -53,6 +53,28 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
   const [conversations, setConversations] = useState<ConversationMessage[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
 
+  // Load conversation history from localStorage on mount (privacy-first: stored locally only)
+  useEffect(() => {
+    if (sessionActive) {
+      const savedConversations = localStorage.getItem('openedmind-realtime-conversation');
+      if (savedConversations) {
+        try {
+          const parsed = JSON.parse(savedConversations);
+          setConversations(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
+        } catch (error) {
+          console.error('Error loading conversation history:', error);
+        }
+      }
+    }
+  }, [sessionActive]);
+
+  // Save conversation history to localStorage (privacy-first: stays on device)
+  useEffect(() => {
+    if (conversations.length > 0 && sessionActive) {
+      localStorage.setItem('openedmind-realtime-conversation', JSON.stringify(conversations));
+    }
+  }, [conversations, sessionActive]);
+
   // REFS
   const videoRef = useRef<HTMLVideoElement>(null);
   const faceDetectionRef = useRef<any>(null);
@@ -246,13 +268,14 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         };
         setConversations((p) => [...p, userMsg]);
 
-        // generate AI
+        // generate AI with enhanced memory (last 12 messages for better context)
+        // Privacy: Messages never leave the secure edge function, processed only for conversation continuity
         const ctx: SupportContext = {
           age: selectedAge,
           sessionType: "realtime",
           mood: currentMood || "neutral",
           emotion: emotionLevel || "calm",
-          previousMessages: conversations.slice(-4).map((m) => m.content),
+          previousMessages: conversations.slice(-12).map((m) => m.content),
         };
 
         addLog("Generating AI response...");
@@ -380,6 +403,9 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     setCurrentMood("Neutral");
     setEmotionLevel("Calm");
     isProcessingSpeech.current = false;
+    
+    // Clear conversation history from localStorage for privacy
+    localStorage.removeItem('openedmind-realtime-conversation');
 
     stopListening();
     if (faceDetectionRef.current) faceDetectionRef.current.close?.();
