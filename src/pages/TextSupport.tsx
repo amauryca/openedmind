@@ -35,6 +35,26 @@ const TextSupport = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // Load conversation history from localStorage on mount (privacy-first: stored locally only)
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('openedmind-conversation');
+    if (savedMessages && sessionActive) {
+      try {
+        const parsed = JSON.parse(savedMessages);
+        setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
+      } catch (error) {
+        console.error('Error loading conversation history:', error);
+      }
+    }
+  }, [sessionActive]);
+
+  // Save conversation history to localStorage (privacy-first: stays on device)
+  useEffect(() => {
+    if (messages.length > 0 && sessionActive) {
+      localStorage.setItem('openedmind-conversation', JSON.stringify(messages));
+    }
+  }, [messages, sessionActive]);
+
   // Auto-scroll chat container to latest message
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -128,11 +148,12 @@ const TextSupport = () => {
     setIsTyping(true);
 
     try {
-      // Prepare context for support API
+      // Prepare context for support API with enhanced memory (last 12 messages for better context)
+      // Privacy: Messages never leave the secure edge function, processed only for conversation continuity
       const context: SupportContext = {
         age: selectedAge,
         sessionType: 'text',
-        previousMessages: messages.slice(-6).map(m => m.content) // Last 6 messages for context
+        previousMessages: messages.slice(-12).map(m => m.content)
       };
 
       // Generate AI response
@@ -177,6 +198,8 @@ const TextSupport = () => {
 
   const handleEndSession = () => {
     setSessionEnded(true);
+    // Clear conversation history from localStorage for privacy
+    localStorage.removeItem('openedmind-conversation');
   };
 
   return (

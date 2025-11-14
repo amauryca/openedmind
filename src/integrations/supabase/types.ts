@@ -20,10 +20,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      keep_alive: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      keep_alive: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
