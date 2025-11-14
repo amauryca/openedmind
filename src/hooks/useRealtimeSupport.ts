@@ -268,14 +268,14 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         };
         setConversations((p) => [...p, userMsg]);
 
-        // generate AI with enhanced memory (last 12 messages for better context)
+        // generate AI with full conversation history (until page refresh)
         // Privacy: Messages never leave the secure edge function, processed only for conversation continuity
         const ctx: SupportContext = {
           age: selectedAge,
           sessionType: "realtime",
           mood: currentMood || "neutral",
           emotion: emotionLevel || "calm",
-          previousMessages: conversations.slice(-12).map((m) => m.content),
+          previousMessages: conversations.map((m) => m.content),
         };
 
         addLog("Generating AI response...");
