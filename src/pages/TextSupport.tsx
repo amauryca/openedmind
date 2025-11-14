@@ -148,12 +148,12 @@ const TextSupport = () => {
     setIsTyping(true);
 
     try {
-      // Prepare context for support API with enhanced memory (last 12 messages for better context)
+      // Prepare context for support API with full conversation history (until page refresh)
       // Privacy: Messages never leave the secure edge function, processed only for conversation continuity
       const context: SupportContext = {
         age: selectedAge,
         sessionType: 'text',
-        previousMessages: messages.slice(-12).map(m => m.content)
+        previousMessages: messages.map(m => m.content)
       };
 
       // Generate AI response
