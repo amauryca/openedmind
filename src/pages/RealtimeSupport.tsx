@@ -35,6 +35,108 @@ const RealtimeSupport: React.FC = () => {
     closeEmergency,
   } = useRealtimeSupport();
 
+  // Demo phrases in different languages
+  const demoPhrases: Record<string, { phrase1: string; phrase2: string; phrase3: string; label1: string; label2: string; label3: string }> = {
+    english: {
+      phrase1: "I've been feeling a bit anxious lately about work.",
+      phrase2: "I had a good day today and feel accomplished.",
+      phrase3: "I'm struggling with some relationship issues.",
+      label1: '"Feeling anxious"',
+      label2: '"Good day today"',
+      label3: '"Relationship issues"'
+    },
+    spanish: {
+      phrase1: "Me he sentido un poco ansioso últimamente por el trabajo.",
+      phrase2: "Tuve un buen día hoy y me siento satisfecho.",
+      phrase3: "Estoy luchando con algunos problemas de relación.",
+      label1: '"Me siento ansioso"',
+      label2: '"Buen día hoy"',
+      label3: '"Problemas de relación"'
+    },
+    french: {
+      phrase1: "Je me suis senti un peu anxieux ces derniers temps à propos du travail.",
+      phrase2: "J'ai passé une bonne journée aujourd'hui et je me sens accompli.",
+      phrase3: "Je traverse des difficultés relationnelles.",
+      label1: '"Me sens anxieux"',
+      label2: '"Bonne journée"',
+      label3: '"Problèmes relationnels"'
+    },
+    german: {
+      phrase1: "Ich habe mich in letzter Zeit wegen der Arbeit etwas ängstlich gefühlt.",
+      phrase2: "Ich hatte heute einen guten Tag und fühle mich erfüllt.",
+      phrase3: "Ich habe Schwierigkeiten mit Beziehungsproblemen.",
+      label1: '"Fühle mich ängstlich"',
+      label2: '"Guter Tag heute"',
+      label3: '"Beziehungsprobleme"'
+    },
+    italian: {
+      phrase1: "Mi sono sentito un po' ansioso ultimamente per il lavoro.",
+      phrase2: "Ho avuto una buona giornata oggi e mi sento realizzato.",
+      phrase3: "Sto lottando con alcuni problemi di relazione.",
+      label1: '"Mi sento ansioso"',
+      label2: '"Buona giornata"',
+      label3: '"Problemi di relazione"'
+    },
+    portuguese: {
+      phrase1: "Tenho me sentido um pouco ansioso ultimamente sobre o trabalho.",
+      phrase2: "Tive um bom dia hoje e me sinto realizado.",
+      phrase3: "Estou lutando com alguns problemas de relacionamento.",
+      label1: '"Me sentindo ansioso"',
+      label2: '"Bom dia hoje"',
+      label3: '"Problemas de relacionamento"'
+    },
+    russian: {
+      phrase1: "В последнее время я немного беспокоюсь о работе.",
+      phrase2: "У меня был хороший день сегодня, и я чувствую себя успешным.",
+      phrase3: "Я борюсь с некоторыми проблемами в отношениях.",
+      label1: '"Чувствую тревогу"',
+      label2: '"Хороший день"',
+      label3: '"Проблемы в отношениях"'
+    },
+    japanese: {
+      phrase1: "最近、仕事のことで少し不安を感じています。",
+      phrase2: "今日はいい日で、達成感を感じています。",
+      phrase3: "人間関係の問題に苦しんでいます。",
+      label1: '"不安を感じる"',
+      label2: '"いい日"',
+      label3: '"人間関係の問題"'
+    },
+    korean: {
+      phrase1: "최근 일에 대해 조금 불안을 느끼고 있습니다.",
+      phrase2: "오늘 좋은 하루를 보냈고 성취감을 느낍니다.",
+      phrase3: "인간관계 문제로 어려움을 겪고 있습니다.",
+      label1: '"불안감"',
+      label2: '"좋은 하루"',
+      label3: '"관계 문제"'
+    },
+    chinese: {
+      phrase1: "最近我对工作感到有点焦虑。",
+      phrase2: "今天过得很好，感觉很有成就感。",
+      phrase3: "我正在为一些关系问题而挣扎。",
+      label1: '"感到焦虑"',
+      label2: '"今天很好"',
+      label3: '"关系问题"'
+    },
+    arabic: {
+      phrase1: "لقد شعرت بالقلق قليلاً مؤخرًا بشأن العمل.",
+      phrase2: "كان يومي جيدًا اليوم وأشعر بالإنجاز.",
+      phrase3: "أعاني من بعض مشاكل العلاقات.",
+      label1: '"أشعر بالقلق"',
+      label2: '"يوم جيد"',
+      label3: '"مشاكل العلاقات"'
+    },
+    hindi: {
+      phrase1: "मैं हाल ही में काम को लेकर थोड़ा चिंतित महसूस कर रहा हूं।",
+      phrase2: "आज मेरा दिन अच्छा रहा और मुझे उपलब्धि का अहसास हुआ।",
+      phrase3: "मैं कुछ रिश्ते की समस्याओं से जूझ रहा हूं।",
+      label1: '"चिंतित महसूस"',
+      label2: '"अच्छा दिन"',
+      label3: '"रिश्ते की समस्याएं"'
+    }
+  };
+
+  const currentPhrases = demoPhrases[selectedLanguage] || demoPhrases.english;
+
   // Basic SEO tags for this page
   useEffect(() => {
     document.title = "Real-Time Empathetical Support | openedmind.org";
@@ -257,14 +359,14 @@ const RealtimeSupport: React.FC = () => {
                   <div className="mt-3 lg:mt-4 space-y-2">
                     <p className="text-xs text-muted-foreground text-center">Demo: Quick test phrases (or just speak naturally)</p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <Button size="sm" variant="outline" onClick={() => simulateUserInput("I've been feeling a bit anxious lately about work.")} className="text-xs">
-                        💬 "Feeling anxious"
+                      <Button size="sm" variant="outline" onClick={() => simulateUserInput(currentPhrases.phrase1)} className="text-xs">
+                        💬 {currentPhrases.label1}
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => simulateUserInput("I had a good day today and feel accomplished.")} className="text-xs">
-                        💬 "Good day today"
+                      <Button size="sm" variant="outline" onClick={() => simulateUserInput(currentPhrases.phrase2)} className="text-xs">
+                        💬 {currentPhrases.label2}
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => simulateUserInput("I'm struggling with some relationship issues.")} className="text-xs">
-                        💬 "Relationship issues"
+                      <Button size="sm" variant="outline" onClick={() => simulateUserInput(currentPhrases.phrase3)} className="text-xs">
+                        💬 {currentPhrases.label3}
                       </Button>
                     </div>
 
