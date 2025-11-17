@@ -157,11 +157,16 @@ serve(async (req) => {
 
     // Clean up the response and ensure complete sentences
     let cleanedResponse = generatedText
+      .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+      .replace(/`[^`]+`/g, '') // Remove inline code
       .replace(/\*\*Support\*\*[:\s]*/gi, '') // Remove **Support:** or **Support**
       .replace(/^Support[:\s]*/gi, '') // Remove "Support:" at start
       .replace(/\*\*[^*]*\*\*/g, '') // Remove any other **bold** formatting
+      .replace(/\*[^*]+\*/g, '') // Remove italic formatting
+      .replace(/#{1,6}\s+/g, '') // Remove markdown headers
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Convert markdown links to plain text
       .replace(/^["\s]+|["\s]+$/g, '') // Remove quotes and whitespace at start/end
-      .replace(/^[^a-zA-Z]*/, '') // Remove any non-letter characters at start
+      .replace(/^[^a-zA-ZÀ-ÿ0-9]*/, '') // Remove any non-letter/number characters at start (includes accented chars)
       .trim();
 
     // Ensure the response ends with proper punctuation for complete sentences
