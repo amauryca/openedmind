@@ -203,18 +203,27 @@ serve(async (req) => {
       .replace(/#{1,6}\s+/g, '') // Remove markdown headers
       .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Convert markdown links to plain text
       .replace(/^["\s]+|["\s]+$/g, '') // Remove quotes and whitespace at start/end
-      .replace(/^[^a-zA-ZÀ-ÿ0-9]*/, '') // Remove any non-letter/number characters at start (includes accented chars)
+      .replace(/^[^\p{L}\p{N}]*/u, '') // Remove non-letter/number at start (Unicode-aware for all scripts)
       .trim();
 
     // Ensure the response ends with proper punctuation for complete sentences
-    if (cleanedResponse && !cleanedResponse.match(/[.!?]$/)) {
-      // Find the last complete sentence
-      const lastSentenceMatch = cleanedResponse.match(/^(.*[.!?])/);
+    // Support punctuation from multiple languages: . ! ? 。！？ । ।
+    if (cleanedResponse && !cleanedResponse.match(/[.!?。！？।]$/u)) {
+      // Find the last complete sentence with various punctuation marks
+      const lastSentenceMatch = cleanedResponse.match(/^(.*[.!?。！？।])/u);
       if (lastSentenceMatch) {
         cleanedResponse = lastSentenceMatch[1].trim();
       } else {
-        // If no complete sentence found, add a period
-        cleanedResponse = cleanedResponse + '.';
+        // If no complete sentence found, add appropriate punctuation based on likely script
+        const hasEastAsianChars = /[\u4E00-\u9FFF\u3040-\u309F\u30A0-\u30FF]/.test(cleanedResponse);
+        const hasDevanagari = /[\u0900-\u097F]/.test(cleanedResponse);
+        if (hasEastAsianChars) {
+          cleanedResponse = cleanedResponse + '。';
+        } else if (hasDevanagari) {
+          cleanedResponse = cleanedResponse + '।';
+        } else {
+          cleanedResponse = cleanedResponse + '.';
+        }
       }
     }
 
