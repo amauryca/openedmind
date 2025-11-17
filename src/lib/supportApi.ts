@@ -48,12 +48,12 @@ export const generateSupportResponse = async (
   }
 };
 
-export const generateWelcomeMessage = async (age: string): Promise<string> => {
+export const generateWelcomeMessage = async (age: string, language?: string): Promise<string> => {
   try {
     const { data, error } = await supabase.functions.invoke('generate-support-response', {
       body: { 
         userMessage: '',
-        context: { age, sessionType: 'text' },
+        context: { age, sessionType: 'text', language: language || 'english' },
         isWelcome: true
       }
     });
