@@ -20,11 +20,34 @@ export class WebSpeechAPI {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
-      this.recognition.lang = 'en-US';
+      this.recognition.lang = 'en-US'; // Default, will be set dynamically
     }
     
     // Text-to-Speech setup
     this.synthesis = window.speechSynthesis;
+  }
+  
+  // Set recognition language dynamically
+  setLanguage(language: string) {
+    if (!this.recognition) return;
+    
+    // Map our language names to BCP 47 language codes
+    const languageMap: Record<string, string> = {
+      'english': 'en-US',
+      'spanish': 'es-ES',
+      'french': 'fr-FR',
+      'german': 'de-DE',
+      'italian': 'it-IT',
+      'portuguese': 'pt-PT',
+      'russian': 'ru-RU',
+      'japanese': 'ja-JP',
+      'korean': 'ko-KR',
+      'chinese': 'zh-CN',
+      'arabic': 'ar-SA',
+      'hindi': 'hi-IN'
+    };
+    
+    this.recognition.lang = languageMap[language.toLowerCase()] || 'en-US';
   }
   
   // Speech-to-Text
@@ -228,9 +251,37 @@ export const initializeVoiceEmotionAnalysis = async (
   };
 };
 
-export const speakText = async (text: string) => {
+export const speakText = async (text: string, language?: string) => {
   return new Promise<void>((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Map language to voice locale
+    const languageMap: Record<string, string> = {
+      'english': 'en',
+      'spanish': 'es',
+      'french': 'fr',
+      'german': 'de',
+      'italian': 'it',
+      'portuguese': 'pt',
+      'russian': 'ru',
+      'japanese': 'ja',
+      'korean': 'ko',
+      'chinese': 'zh',
+      'arabic': 'ar',
+      'hindi': 'hi'
+    };
+    
+    // Set the language for the utterance
+    const targetLang = language ? languageMap[language.toLowerCase()] || 'en' : 'en';
+    utterance.lang = targetLang;
+    
+    // Try to find a voice that matches the language
+    const voices = speechAPI.synthesis.getVoices();
+    const matchingVoice = voices.find(voice => voice.lang.startsWith(targetLang));
+    if (matchingVoice) {
+      utterance.voice = matchingVoice;
+    }
+    
     utterance.onend = () => resolve();
     utterance.onerror = () => resolve();
     speechAPI.synthesis.speak(utterance);

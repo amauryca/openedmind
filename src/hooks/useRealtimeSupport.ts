@@ -195,6 +195,8 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     try {
       setIsListening(true);
       addLog("Starting speech recognition...");
+      // Set the recognition language before starting
+      speechAPI.setLanguage(selectedLanguage);
       speechAPI.startListening(
         (text, isFinal) => {
           addLog(`Speech result: ${text} | isFinal: ${isFinal}`);
@@ -220,7 +222,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
       addLog("Failed to start speech recognition: " + e?.message);
       setIsListening(false);
     }
-  }, [toast, addLog]);
+  }, [toast, addLog, selectedLanguage]);
 
   const stopListening = useCallback(() => {
     setIsListening(false);
@@ -298,7 +300,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         // speak
         addLog("Speaking AI response");
         try {
-          await speakText(aiText);
+          await speakText(aiText, selectedLanguage);
           addLog("Finished speaking");
         } catch (se: any) {
           addLog("Speech synthesis failed: " + se?.message);
@@ -317,7 +319,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         };
         setConversations((p) => [...p, fallback]);
         try {
-          await speakText(fallback.content);
+          await speakText(fallback.content, selectedLanguage);
         } catch {}
       } finally {
         // reset and resume listening
@@ -327,6 +329,8 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
           if (sessionActiveRef.current && !isProcessingSpeech.current && isRecordingRef.current) {
             addLog("Resuming listening...");
             setIsListening(true);
+            // Set the recognition language
+            speechAPI.setLanguage(selectedLanguage);
             speechAPI.startListening(
               (text, isFinal) => {
                 addLog(`Speech result: ${text} | isFinal: ${isFinal}`);
@@ -346,7 +350,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         }, 1000);
       }
     },
-    [sessionActive, selectedAge, currentMood, emotionLevel, conversations, toast, updateMoodFromText, addLog]
+    [sessionActive, selectedAge, selectedLanguage, currentMood, emotionLevel, conversations, toast, updateMoodFromText, addLog]
   );
 
   // Session controls
@@ -364,16 +368,18 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     setIsAIResponding(true);
 
     try {
-      const welcome = await generateWelcomeMessage(selectedAge);
+      const welcome = await generateWelcomeMessage(selectedAge, selectedLanguage);
       setConversations([
         { id: Date.now(), type: "ai", content: welcome, timestamp: new Date() },
       ]);
-      await speakText(welcome);
+      await speakText(welcome, selectedLanguage);
       addLog("Welcome message spoken");
       setTimeout(() => {
         if (sessionActiveRef.current && isRecordingRef.current && !isProcessingSpeech.current) {
           setIsListening(true);
           addLog("Starting listening after welcome (direct)");
+          // Set the recognition language
+          speechAPI.setLanguage(selectedLanguage);
           speechAPI.startListening(
             (text, isFinal) => {
               addLog(`Speech result: ${text} | isFinal: ${isFinal}`);
@@ -397,7 +403,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     } finally {
       setIsAIResponding(false);
     }
-  }, [selectedAge, startListening, toast, addLog]);
+  }, [selectedAge, selectedLanguage, startListening, toast, addLog]);
 
   const handleEndSession = useCallback(() => {
     setSessionActive(false);

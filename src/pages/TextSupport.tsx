@@ -76,8 +76,8 @@ const TextSupport = () => {
     setIsTyping(true);
     
     try {
-      // Generate AI welcome message
-      const welcomeContent = await generateWelcomeMessage(selectedAge);
+      // Generate AI welcome message with selected language
+      const welcomeContent = await generateWelcomeMessage(selectedAge, selectedLanguage);
       const welcomeMessage: Message = {
         id: 1,
         type: "ai",
