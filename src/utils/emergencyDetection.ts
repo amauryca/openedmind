@@ -1,6 +1,6 @@
-// Simplified and strict emergency detection for explicit self-harm phrases only
-// Triggers ONLY on clear statements similar to "killing myself" to avoid false positives
+import { supabase } from '@/integrations/supabase/client';
 
+// Fallback phrases for when API is unavailable
 const EXPLICIT_SELF_HARM_PHRASES = [
   'kill myself',
   'killing myself',
@@ -52,7 +52,43 @@ const EXPLICIT_SELF_HARM_PHRASES = [
   'escape this pain'
 ];
 
-export const detectEmergency = (text: string): boolean => {
+// AI-powered detection with fallback
+export const detectEmergency = async (text: string): Promise<boolean> => {
+  try {
+    // Try AI-powered detection first
+    const { data, error } = await supabase.functions.invoke('detect-emergency', {
+      body: { text }
+    });
+
+    if (error) {
+      console.error('Emergency detection API error:', error);
+      // Fall back to keyword matching
+      return fallbackDetection(text);
+    }
+
+    if (!data?.success) {
+      console.error('Emergency detection failed:', data?.error);
+      return fallbackDetection(text);
+    }
+
+    // Use AI result if confidence is high enough
+    if (data.confidence >= 0.7) {
+      return data.isEmergency;
+    }
+
+    // If confidence is low, double-check with fallback
+    const fallbackResult = fallbackDetection(text);
+    return data.isEmergency || fallbackResult;
+
+  } catch (error) {
+    console.error('Error in emergency detection:', error);
+    // Fall back to keyword matching on any error
+    return fallbackDetection(text);
+  }
+};
+
+// Fallback keyword-based detection
+const fallbackDetection = (text: string): boolean => {
   const lower = text.toLowerCase();
   return EXPLICIT_SELF_HARM_PHRASES.some((p) => lower.includes(p));
 };

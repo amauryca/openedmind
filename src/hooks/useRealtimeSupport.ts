@@ -249,8 +249,9 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         return;
       }
 
-      // Emergency detection
-      if (detectEmergency(input)) {
+      // Emergency detection (async AI-powered)
+      const isEmergency = await detectEmergency(input);
+      if (isEmergency) {
         addLog("Emergency detected");
         setShowEmergencyModal(true);
         isProcessingSpeech.current = false;
