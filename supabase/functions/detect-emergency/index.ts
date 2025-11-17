@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text } = await req.json();
+    const { text, language = 'english' } = await req.json();
 
     if (!text || typeof text !== 'string') {
       return new Response(
@@ -22,7 +22,11 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `You are an emergency detection system for a mental health support platform. Your ONLY job is to determine if the user's message contains indicators of immediate self-harm, suicide ideation, or crisis.
+    const languageNote = language !== 'english' 
+      ? `\n\nIMPORTANT: The user's message is in ${language}. Analyze the message in that language. Emergency indicators exist in all languages.`
+      : '';
+
+    const systemPrompt = `You are an emergency detection system for a mental health support platform. Your ONLY job is to determine if the user's message contains indicators of immediate self-harm, suicide ideation, or crisis.${languageNote}
 
 Respond with ONLY a JSON object in this exact format:
 {
@@ -31,7 +35,7 @@ Respond with ONLY a JSON object in this exact format:
 }
 
 Consider these as emergencies:
-- Direct statements about self-harm or suicide
+- Direct statements about self-harm or suicide (in any language)
 - Planning or intent to harm oneself
 - Immediate crisis or danger
 - Active suicidal ideation
@@ -42,7 +46,7 @@ DO NOT flag as emergencies:
 - Hypothetical or philosophical discussions
 - Expressing difficulty without immediate harm intent
 
-Be sensitive but accurate. Only flag true emergencies.`;
+Be sensitive but accurate. Only flag true emergencies. Analyze the message content regardless of the language it's written in.`;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
