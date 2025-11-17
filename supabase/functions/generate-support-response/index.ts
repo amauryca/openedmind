@@ -76,22 +76,22 @@ serve(async (req) => {
     
     if (isWelcome) {
       const welcomeInstructions = {
-        'child': 'Say: "Hi! I\'m OpenedMind, and I\'m here to listen. How are you feeling today?" (Keep it simple and friendly)',
-        'teen': 'Say: "Hey, I\'m OpenedMind. I\'m here to listen without judgment. What\'s on your mind?" (Be authentic)',
-        'young-adult': 'Say: "Hello, I\'m OpenedMind - a safe space for your thoughts and feelings. What brings you here today?" (Be warm)',
-        'adult': 'Say: "Welcome. I\'m OpenedMind, here to support your emotional wellbeing. How are you feeling?" (Be genuine)',
-        'senior': 'Say: "Hello, I\'m OpenedMind. I\'m honored to be here with you. How are you doing today?" (Be respectful)'
+        'child': 'Greet them warmly as a supportive friend. Use simple, kind words. Ask how they are feeling today. Keep it to 2 sentences.',
+        'teen': 'Greet them authentically. Let them know you are here to listen without judgment. Ask what is on their mind. Keep it to 2 sentences.',
+        'young-adult': 'Welcome them warmly. Introduce yourself as a safe space for their thoughts and feelings. Ask what brings them here. Keep it to 2 sentences.',
+        'adult': 'Welcome them genuinely. Introduce yourself as emotional support. Ask how they are feeling. Keep it to 2 sentences.',
+        'senior': 'Greet them respectfully. Express that you are honored to be here with them. Ask how they are doing. Keep it to 2 sentences.'
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
       const languageInstruction = context.language && context.language !== 'english' 
-        ? ` CRITICAL: Respond ENTIRELY in ${context.language}. Do not use English.` 
+        ? ` CRITICAL: You must respond ENTIRELY in ${context.language}. Do not use any English words. Translate everything to ${context.language}.` 
         : '';
       
       messages = [
         {
           role: "system",
-          content: `You are OpenedMind, an emotional support companion. ${instruction} IMPORTANT: Keep welcome message to 2 sentences maximum. Be warm but concise.${languageInstruction}`
+          content: `You are OpenedMind, an emotional support companion. ${instruction}${languageInstruction}`
         },
         {
           role: "user",
