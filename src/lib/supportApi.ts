@@ -6,6 +6,7 @@ export interface SupportContext {
   mood?: string;
   emotion?: string;
   previousMessages?: string[];
+  language?: string;
 }
 
 export const generateSupportResponse = async (

@@ -18,6 +18,8 @@ interface UseRealtimeSupportReturn {
   // UI state
   selectedAge: string;
   setSelectedAge: (age: string) => void;
+  selectedLanguage: string;
+  setSelectedLanguage: (language: string) => void;
   sessionActive: boolean;
   isCameraOn: boolean;
   isRecording: boolean;
@@ -42,6 +44,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
 
   // UI STATE
   const [selectedAge, setSelectedAge] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("english");
   const [sessionActive, setSessionActive] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -277,6 +280,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
           mood: currentMood || "neutral",
           emotion: emotionLevel || "calm",
           previousMessages: conversations.map((m) => m.content),
+          language: selectedLanguage
         };
 
         addLog("Generating AI response...");
@@ -441,6 +445,8 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     videoRef,
     selectedAge,
     setSelectedAge,
+    selectedLanguage,
+    setSelectedLanguage,
     sessionActive,
     isCameraOn,
     isRecording,

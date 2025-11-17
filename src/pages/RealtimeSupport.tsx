@@ -15,6 +15,8 @@ const RealtimeSupport: React.FC = () => {
     videoRef,
     selectedAge,
     setSelectedAge,
+    selectedLanguage,
+    setSelectedLanguage,
     sessionActive,
     isCameraOn,
     isRecording,
@@ -66,21 +68,47 @@ const RealtimeSupport: React.FC = () => {
             {/* Age Selection */}
             <Card className="shadow-empathy animate-slide-in">
               <CardHeader>
-                <CardTitle className="text-xl">Age Range</CardTitle>
+                <CardTitle className="text-xl">Session Configuration</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Select value={selectedAge} onValueChange={setSelectedAge}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select age range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="child">Child (6-12 years)</SelectItem>
-                    <SelectItem value="teen">Teen (13-19 years)</SelectItem>
-                    <SelectItem value="young-adult">Young Adult (20-39 years)</SelectItem>
-                    <SelectItem value="adult">Middle Age (40-64 years)</SelectItem>
-                    <SelectItem value="senior">Senior (65+ years)</SelectItem>
-                  </SelectContent>
-                </Select>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Age Range</label>
+                  <Select value={selectedAge} onValueChange={setSelectedAge}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select age range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="child">Child (6-12 years)</SelectItem>
+                      <SelectItem value="teen">Teen (13-19 years)</SelectItem>
+                      <SelectItem value="young-adult">Young Adult (20-39 years)</SelectItem>
+                      <SelectItem value="adult">Middle Age (40-64 years)</SelectItem>
+                      <SelectItem value="senior">Senior (65+ years)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Language</label>
+                  <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="english">English</SelectItem>
+                      <SelectItem value="spanish">Español</SelectItem>
+                      <SelectItem value="french">Français</SelectItem>
+                      <SelectItem value="german">Deutsch</SelectItem>
+                      <SelectItem value="italian">Italiano</SelectItem>
+                      <SelectItem value="portuguese">Português</SelectItem>
+                      <SelectItem value="chinese">中文</SelectItem>
+                      <SelectItem value="japanese">日本語</SelectItem>
+                      <SelectItem value="korean">한국어</SelectItem>
+                      <SelectItem value="arabic">العربية</SelectItem>
+                      <SelectItem value="hindi">हिन्दी</SelectItem>
+                      <SelectItem value="russian">Русский</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardContent>
             </Card>
 

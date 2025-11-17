@@ -14,6 +14,7 @@ interface SupportContext {
   mood?: string;
   emotion?: string;
   previousMessages?: string[];
+  language?: string;
 }
 
 const createSystemPrompt = (context: SupportContext): string => {
@@ -32,6 +33,10 @@ const createSystemPrompt = (context: SupportContext): string => {
     emotionalContext = `\nTheir current emotional state: ${context.mood || 'unknown'}, ${context.emotion || 'complex emotions'}.`;
   }
 
+  const languageInstruction = context.language && context.language !== 'english' 
+    ? `\n\nIMPORTANT: Respond ENTIRELY in ${context.language}. All your responses must be in ${context.language}, not English.` 
+    : '';
+
   const coreInstructions = `
 
 CORE RULES:
@@ -48,7 +53,7 @@ RESPONSE FORMAT:
 - Second sentence: Brief insight or reflection
 - Third sentence: One thoughtful question to explore deeper`;
 
-  return `${systemRole}${emotionalContext}${coreInstructions}`;
+  return `${systemRole}${emotionalContext}${languageInstruction}${coreInstructions}`;
 };
 
 serve(async (req) => {
@@ -79,11 +84,14 @@ serve(async (req) => {
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
+      const languageInstruction = context.language && context.language !== 'english' 
+        ? ` CRITICAL: Respond ENTIRELY in ${context.language}. Do not use English.` 
+        : '';
       
       messages = [
         {
           role: "system",
-          content: `You are OpenedMind, an emotional support companion. ${instruction} IMPORTANT: Keep welcome message to 2 sentences maximum. Be warm but concise.`
+          content: `You are OpenedMind, an emotional support companion. ${instruction} IMPORTANT: Keep welcome message to 2 sentences maximum. Be warm but concise.${languageInstruction}`
         },
         {
           role: "user",
