@@ -26,6 +26,7 @@ const TextSupport = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedAge, setSelectedAge] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("english");
   const [sessionActive, setSessionActive] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -154,7 +155,8 @@ const TextSupport = () => {
       const context: SupportContext = {
         age: selectedAge,
         sessionType: 'text',
-        previousMessages: messages.map(m => m.content)
+        previousMessages: messages.map(m => m.content),
+        language: selectedLanguage
       };
 
       // Generate AI response
@@ -238,6 +240,26 @@ const TextSupport = () => {
                     <SelectItem value="young-adult">Young Adult (20-39 years)</SelectItem>
                     <SelectItem value="adult">Middle Age (40-64 years)</SelectItem>
                     <SelectItem value="senior">Senior (65+ years)</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="spanish">Español</SelectItem>
+                    <SelectItem value="french">Français</SelectItem>
+                    <SelectItem value="german">Deutsch</SelectItem>
+                    <SelectItem value="italian">Italiano</SelectItem>
+                    <SelectItem value="portuguese">Português</SelectItem>
+                    <SelectItem value="chinese">中文</SelectItem>
+                    <SelectItem value="japanese">日本語</SelectItem>
+                    <SelectItem value="korean">한국어</SelectItem>
+                    <SelectItem value="arabic">العربية</SelectItem>
+                    <SelectItem value="hindi">हिन्दी</SelectItem>
+                    <SelectItem value="russian">Русский</SelectItem>
                   </SelectContent>
                 </Select>
                 
