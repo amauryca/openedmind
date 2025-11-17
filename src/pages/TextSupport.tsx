@@ -130,8 +130,8 @@ const TextSupport = () => {
       return;
     }
 
-    // Check for emergency keywords (async AI-powered detection)
-    const isEmergency = await detectEmergency(inputMessage);
+    // Check for emergency keywords (async AI-powered detection with language awareness)
+    const isEmergency = await detectEmergency(inputMessage, selectedLanguage);
     if (isEmergency) {
       setShowEmergencyModal(true);
       return;
