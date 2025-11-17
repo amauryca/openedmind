@@ -33,8 +33,26 @@ const createSystemPrompt = (context: SupportContext): string => {
     emotionalContext = `\nTheir current emotional state: ${context.mood || 'unknown'}, ${context.emotion || 'complex emotions'}.`;
   }
 
+  // Map language codes to proper language names for better AI understanding
+  const languageNames: Record<string, string> = {
+    'english': 'English',
+    'spanish': 'Spanish (Español)',
+    'french': 'French (Français)',
+    'german': 'German (Deutsch)',
+    'italian': 'Italian (Italiano)',
+    'portuguese': 'Portuguese (Português)',
+    'russian': 'Russian (Русский)',
+    'japanese': 'Japanese (日本語)',
+    'korean': 'Korean (한국어)',
+    'chinese': 'Chinese (中文)',
+    'arabic': 'Arabic (العربية)',
+    'hindi': 'Hindi (हिन्दी)'
+  };
+  
+  const targetLanguage = context.language ? languageNames[context.language.toLowerCase()] || context.language : 'English';
+  
   const languageInstruction = context.language && context.language !== 'english' 
-    ? `\n\nIMPORTANT: Respond ENTIRELY in ${context.language}. All your responses must be in ${context.language}, not English.` 
+    ? `\n\nCRITICAL LANGUAGE REQUIREMENT: You MUST respond ENTIRELY in ${targetLanguage}. Every single word of your response must be in ${targetLanguage}, NOT in English. This is non-negotiable. Do not mix languages.` 
     : '';
 
   const coreInstructions = `
@@ -84,8 +102,27 @@ serve(async (req) => {
       };
 
       const instruction = welcomeInstructions[context.age as keyof typeof welcomeInstructions] || welcomeInstructions.adult;
+      
+      // Map language codes to proper names
+      const languageNames: Record<string, string> = {
+        'english': 'English',
+        'spanish': 'Spanish (Español)',
+        'french': 'French (Français)',
+        'german': 'German (Deutsch)',
+        'italian': 'Italian (Italiano)',
+        'portuguese': 'Portuguese (Português)',
+        'russian': 'Russian (Русский)',
+        'japanese': 'Japanese (日本語)',
+        'korean': 'Korean (한국어)',
+        'chinese': 'Chinese (中文)',
+        'arabic': 'Arabic (العربية)',
+        'hindi': 'Hindi (हिन्दी)'
+      };
+      
+      const targetLang = context.language ? languageNames[context.language.toLowerCase()] || context.language : 'English';
+      
       const languageInstruction = context.language && context.language !== 'english' 
-        ? ` CRITICAL: You must respond ENTIRELY in ${context.language}. Do not use any English words. Translate everything to ${context.language}.` 
+        ? ` CRITICAL: You must respond ENTIRELY in ${targetLang}. Do not use any English words. Every word must be in ${targetLang}.` 
         : '';
       
       messages = [
