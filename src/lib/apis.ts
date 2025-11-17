@@ -254,6 +254,8 @@ export const initializeVoiceEmotionAnalysis = async (
 export const speakText = async (text: string, language?: string) => {
   return new Promise<void>((resolve) => {
     try {
+      console.log('[speakText] Starting speech synthesis for:', text.substring(0, 50) + '...', 'Language:', language);
+      
       const utterance = new SpeechSynthesisUtterance(text);
 
       // Use full BCP-47 language tags to improve compatibility across browsers
@@ -275,26 +277,34 @@ export const speakText = async (text: string, language?: string) => {
       const selected = language ? language.toLowerCase() : 'english';
       const bcp47 = localeMap[selected] || 'en-US';
       utterance.lang = bcp47;
+      console.log('[speakText] Using language code:', bcp47);
 
-      // Cancel any pending speech to avoid queue buildup that can stall on some browsers
-      try {
+      // Only cancel if something is currently speaking
+      if (speechAPI.synthesis.speaking) {
+        console.log('[speakText] Canceling previous speech');
         speechAPI.synthesis.cancel();
-      } catch {}
+      }
 
       // Ensure voices are loaded (getVoices may return empty initially)
       const loadVoices = (): Promise<SpeechSynthesisVoice[]> =>
         new Promise((res) => {
           const existing = speechAPI.synthesis.getVoices();
-          if (existing && existing.length) return res(existing);
+          if (existing && existing.length) {
+            console.log('[speakText] Voices already loaded:', existing.length);
+            return res(existing);
+          }
 
+          console.log('[speakText] Waiting for voices to load...');
           const timeoutId = setTimeout(() => {
-            // Fallback: resolve with whatever is available after timeout
-            res(speechAPI.synthesis.getVoices());
-          }, 1200);
+            const fallbackVoices = speechAPI.synthesis.getVoices();
+            console.log('[speakText] Voice loading timeout, using fallback:', fallbackVoices.length);
+            res(fallbackVoices);
+          }, 1500);
 
           const handler = () => {
             const v = speechAPI.synthesis.getVoices();
             if (v && v.length) {
+              console.log('[speakText] Voices loaded via event:', v.length);
               // @ts-ignore - property exists in browsers
               speechAPI.synthesis.onvoiceschanged = null;
               clearTimeout(timeoutId);
@@ -306,31 +316,61 @@ export const speakText = async (text: string, language?: string) => {
         });
 
       loadVoices().then((voices) => {
+        console.log('[speakText] Available voices:', voices.map(v => `${v.name} (${v.lang})`).join(', '));
+        
         // Prefer exact locale, otherwise fall back to language prefix
         const base = bcp47.split('-')[0];
         const voiceMatch =
           voices?.find((v) => v.lang?.toLowerCase() === bcp47.toLowerCase()) ||
           voices?.find((v) => v.lang?.toLowerCase().startsWith(base));
-        if (voiceMatch) utterance.voice = voiceMatch;
+        
+        if (voiceMatch) {
+          console.log('[speakText] Selected voice:', voiceMatch.name, voiceMatch.lang);
+          utterance.voice = voiceMatch;
+        } else {
+          console.warn('[speakText] No matching voice found for', bcp47);
+        }
 
-        // Safety timer so UI never hangs if no onend/onerror fires (some platforms)
-        const safetyMs = Math.min(10000, Math.max(1500, Math.round(text.length * 45)));
+        // Longer safety timer to ensure speech completes
+        const safetyMs = Math.min(15000, Math.max(3000, Math.round(text.length * 60)));
+        console.log('[speakText] Safety timeout set to:', safetyMs, 'ms');
+        
+        let hasResolved = false;
+        const safeResolve = () => {
+          if (!hasResolved) {
+            hasResolved = true;
+            console.log('[speakText] Speech completed');
+            resolve();
+          }
+        };
+
         const safetyTimer = setTimeout(() => {
-          resolve();
+          console.warn('[speakText] Safety timeout reached');
+          safeResolve();
         }, safetyMs);
 
-        utterance.onend = () => {
-          clearTimeout(safetyTimer);
-          resolve();
-        };
-        utterance.onerror = () => {
-          clearTimeout(safetyTimer);
-          resolve();
+        utterance.onstart = () => {
+          console.log('[speakText] Speech started');
         };
 
+        utterance.onend = () => {
+          console.log('[speakText] Speech ended normally');
+          clearTimeout(safetyTimer);
+          safeResolve();
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('[speakText] Speech error:', event.error, event);
+          clearTimeout(safetyTimer);
+          safeResolve();
+        };
+
+        console.log('[speakText] Calling speak()');
         speechAPI.synthesis.speak(utterance);
+        console.log('[speakText] speak() called, speaking status:', speechAPI.synthesis.speaking);
       });
-    } catch {
+    } catch (error) {
+      console.error('[speakText] Exception:', error);
       // If anything fails, resolve to avoid blocking the UI
       resolve();
     }
