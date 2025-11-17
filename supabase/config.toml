@@ -36,3 +36,6 @@ port = 54329
 
 [functions.generate-therapy-response]
 verify_jwt = false
+
+[functions.detect-emergency]
+verify_jwt = false

@@ -129,8 +129,9 @@ const TextSupport = () => {
       return;
     }
 
-    // Check for emergency keywords
-    if (detectEmergency(inputMessage)) {
+    // Check for emergency keywords (async AI-powered detection)
+    const isEmergency = await detectEmergency(inputMessage);
+    if (isEmergency) {
       setShowEmergencyModal(true);
       return;
     }
