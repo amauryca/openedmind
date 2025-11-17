@@ -253,37 +253,86 @@ export const initializeVoiceEmotionAnalysis = async (
 
 export const speakText = async (text: string, language?: string) => {
   return new Promise<void>((resolve) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Map language to voice locale
-    const languageMap: Record<string, string> = {
-      'english': 'en',
-      'spanish': 'es',
-      'french': 'fr',
-      'german': 'de',
-      'italian': 'it',
-      'portuguese': 'pt',
-      'russian': 'ru',
-      'japanese': 'ja',
-      'korean': 'ko',
-      'chinese': 'zh',
-      'arabic': 'ar',
-      'hindi': 'hi'
-    };
-    
-    // Set the language for the utterance
-    const targetLang = language ? languageMap[language.toLowerCase()] || 'en' : 'en';
-    utterance.lang = targetLang;
-    
-    // Try to find a voice that matches the language
-    const voices = speechAPI.synthesis.getVoices();
-    const matchingVoice = voices.find(voice => voice.lang.startsWith(targetLang));
-    if (matchingVoice) {
-      utterance.voice = matchingVoice;
+    try {
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Use full BCP-47 language tags to improve compatibility across browsers
+      const localeMap: Record<string, string> = {
+        english: 'en-US',
+        spanish: 'es-ES',
+        french: 'fr-FR',
+        german: 'de-DE',
+        italian: 'it-IT',
+        portuguese: 'pt-PT',
+        russian: 'ru-RU',
+        japanese: 'ja-JP',
+        korean: 'ko-KR',
+        chinese: 'zh-CN',
+        arabic: 'ar-SA',
+        hindi: 'hi-IN',
+      };
+
+      const selected = language ? language.toLowerCase() : 'english';
+      const bcp47 = localeMap[selected] || 'en-US';
+      utterance.lang = bcp47;
+
+      // Cancel any pending speech to avoid queue buildup that can stall on some browsers
+      try {
+        speechAPI.synthesis.cancel();
+      } catch {}
+
+      // Ensure voices are loaded (getVoices may return empty initially)
+      const loadVoices = (): Promise<SpeechSynthesisVoice[]> =>
+        new Promise((res) => {
+          const existing = speechAPI.synthesis.getVoices();
+          if (existing && existing.length) return res(existing);
+
+          const timeoutId = setTimeout(() => {
+            // Fallback: resolve with whatever is available after timeout
+            res(speechAPI.synthesis.getVoices());
+          }, 1200);
+
+          const handler = () => {
+            const v = speechAPI.synthesis.getVoices();
+            if (v && v.length) {
+              // @ts-ignore - property exists in browsers
+              speechAPI.synthesis.onvoiceschanged = null;
+              clearTimeout(timeoutId);
+              res(v);
+            }
+          };
+          // @ts-ignore - property exists in browsers
+          speechAPI.synthesis.onvoiceschanged = handler;
+        });
+
+      loadVoices().then((voices) => {
+        // Prefer exact locale, otherwise fall back to language prefix
+        const base = bcp47.split('-')[0];
+        const voiceMatch =
+          voices?.find((v) => v.lang?.toLowerCase() === bcp47.toLowerCase()) ||
+          voices?.find((v) => v.lang?.toLowerCase().startsWith(base));
+        if (voiceMatch) utterance.voice = voiceMatch;
+
+        // Safety timer so UI never hangs if no onend/onerror fires (some platforms)
+        const safetyMs = Math.min(10000, Math.max(1500, Math.round(text.length * 45)));
+        const safetyTimer = setTimeout(() => {
+          resolve();
+        }, safetyMs);
+
+        utterance.onend = () => {
+          clearTimeout(safetyTimer);
+          resolve();
+        };
+        utterance.onerror = () => {
+          clearTimeout(safetyTimer);
+          resolve();
+        };
+
+        speechAPI.synthesis.speak(utterance);
+      });
+    } catch {
+      // If anything fails, resolve to avoid blocking the UI
+      resolve();
     }
-    
-    utterance.onend = () => resolve();
-    utterance.onerror = () => resolve();
-    speechAPI.synthesis.speak(utterance);
   });
 };
