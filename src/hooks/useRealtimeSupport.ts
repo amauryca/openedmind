@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { SupportContext, generateSupportResponse, generateWelcomeMessage } from "@/lib/supportApi";
-import { initializeFaceDetection, initializeVoiceEmotionAnalysis, speakText, speechAPI } from "@/lib/apis";
+import { initializeFaceDetection, initializeVoiceEmotionAnalysis, speechAPI } from "@/lib/apis";
+import { speakViaEdge } from "@/lib/ttsClient";
 import { detectEmergency } from "@/utils/emergencyDetection";
 import { securityManager } from "@/lib/security";
 
@@ -300,7 +301,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         // speak
         addLog("Speaking AI response");
         try {
-          await speakText(aiText, selectedLanguage);
+          await speakViaEdge(aiText, selectedLanguage);
           addLog("Finished speaking");
         } catch (se: any) {
           addLog("Speech synthesis failed: " + se?.message);
@@ -319,7 +320,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
         };
         setConversations((p) => [...p, fallback]);
         try {
-          await speakText(fallback.content, selectedLanguage);
+          await speakViaEdge(fallback.content, selectedLanguage);
         } catch {}
       } finally {
         // reset and resume listening
@@ -372,7 +373,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
       setConversations([
         { id: Date.now(), type: "ai", content: welcome, timestamp: new Date() },
       ]);
-      await speakText(welcome, selectedLanguage);
+      await speakViaEdge(welcome, selectedLanguage);
       addLog("Welcome message spoken");
       setTimeout(() => {
         if (sessionActiveRef.current && isRecordingRef.current && !isProcessingSpeech.current) {
