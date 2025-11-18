@@ -434,7 +434,10 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     setIsRecording((prev) => {
       const next = !prev;
       if (next) startListening();
-      else stopListening();
+      else {
+        stopListening();
+        speechAPI.stopSpeaking();
+      }
       return next;
     });
   }, [startListening, stopListening]);
