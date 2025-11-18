@@ -420,6 +420,7 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
     localStorage.removeItem('openedmind-realtime-conversation');
 
     stopListening();
+    speechAPI.stopSpeaking();
     if (faceDetectionRef.current) faceDetectionRef.current.close?.();
     if (audioCtxRef.current) audioCtxRef.current.close?.();
     if (videoRef.current?.srcObject) {
