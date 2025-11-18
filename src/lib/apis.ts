@@ -255,8 +255,6 @@ export const speakText = async (text: string, language?: string) => {
   return new Promise<void>((resolve) => {
     try {
       console.log('[speakText] Starting speech synthesis for:', text.substring(0, 50) + '...', 'Language:', language);
-      
-      const utterance = new SpeechSynthesisUtterance(text);
 
       // Use full BCP-47 language tags to improve compatibility across browsers
       const localeMap: Record<string, string> = {
@@ -276,14 +274,10 @@ export const speakText = async (text: string, language?: string) => {
 
       const selected = language ? language.toLowerCase() : 'english';
       const bcp47 = localeMap[selected] || 'en-US';
-      utterance.lang = bcp47;
       console.log('[speakText] Using language code:', bcp47);
 
-      // Only cancel if something is currently speaking
-      if (speechAPI.synthesis.speaking) {
-        console.log('[speakText] Canceling previous speech');
-        speechAPI.synthesis.cancel();
-      }
+      // Always cancel to reset any stale queue/state (Safari/WebKit quirk)
+      try { speechAPI.synthesis.cancel(); } catch {}
 
       // Ensure voices are loaded (getVoices may return empty initially)
       const loadVoices = (): Promise<SpeechSynthesisVoice[]> =>
@@ -317,16 +311,17 @@ export const speakText = async (text: string, language?: string) => {
 
       loadVoices().then((voices) => {
         console.log('[speakText] Available voices:', voices.map(v => `${v.name} (${v.lang})`).join(', '));
-        
+
         // Prefer exact locale, otherwise fall back to language prefix
         const base = bcp47.split('-')[0];
         const voiceMatch =
           voices?.find((v) => v.lang?.toLowerCase() === bcp47.toLowerCase()) ||
           voices?.find((v) => v.lang?.toLowerCase().startsWith(base));
-        
+
+        const effectiveLang = (voiceMatch?.lang || bcp47);
+
         if (voiceMatch) {
           console.log('[speakText] Selected voice:', voiceMatch.name, voiceMatch.lang);
-          utterance.voice = voiceMatch;
         } else {
           console.warn('[speakText] No matching voice found for', bcp47);
         }
@@ -334,7 +329,7 @@ export const speakText = async (text: string, language?: string) => {
         // Longer safety timer to ensure speech completes
         const safetyMs = Math.min(15000, Math.max(3000, Math.round(text.length * 60)));
         console.log('[speakText] Safety timeout set to:', safetyMs, 'ms');
-        
+
         let hasResolved = false;
         const safeResolve = () => {
           if (!hasResolved) {
@@ -349,26 +344,55 @@ export const speakText = async (text: string, language?: string) => {
           safeResolve();
         }, safetyMs);
 
-        utterance.onstart = () => {
-          console.log('[speakText] Speech started');
+        let started = false;
+
+        const attachHandlers = (u: SpeechSynthesisUtterance) => {
+          u.onstart = () => {
+            started = true;
+            console.log('[speakText] Speech started');
+          };
+          u.onend = () => {
+            console.log('[speakText] Speech ended normally');
+            clearTimeout(safetyTimer);
+            safeResolve();
+          };
+          u.onerror = (event) => {
+            console.error('[speakText] Speech error:', event.error, event);
+            clearTimeout(safetyTimer);
+            safeResolve();
+          };
         };
 
-        utterance.onend = () => {
-          console.log('[speakText] Speech ended normally');
-          clearTimeout(safetyTimer);
-          safeResolve();
-        };
-        
-        utterance.onerror = (event) => {
-          console.error('[speakText] Speech error:', event.error, event);
-          clearTimeout(safetyTimer);
-          safeResolve();
+        const speakOnce = (useVoice?: SpeechSynthesisVoice) => {
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = useVoice?.lang || effectiveLang;
+          u.volume = 1;
+          u.rate = 1;
+          u.pitch = 1;
+          if (useVoice) u.voice = useVoice;
+          attachHandlers(u);
+          console.log('[speakText] Calling speak()');
+          speechAPI.synthesis.speak(u);
+          console.log('[speakText] speak() called, speaking status:', speechAPI.synthesis.speaking);
         };
 
-        console.log('[speakText] Calling speak()');
-        speechAPI.synthesis.speak(utterance);
-        console.log('[speakText] speak() called, speaking status:', speechAPI.synthesis.speaking);
-      });
+        // First attempt: matched voice (if any)
+        speakOnce(voiceMatch);
+
+        // Retry quickly if the engine didn't start (common on WebKit with non-Latin scripts)
+        setTimeout(() => {
+          if (!started) {
+            console.warn('[speakText] No onstart within 800ms, retrying without explicit voice and looser lang');
+            try { speechAPI.synthesis.cancel(); } catch {}
+            const u2 = new SpeechSynthesisUtterance(text);
+            const loose = effectiveLang.includes('-') ? effectiveLang.split('-')[0] : effectiveLang;
+            u2.lang = loose;
+            u2.volume = 1; u2.rate = 1; u2.pitch = 1;
+            attachHandlers(u2);
+            speechAPI.synthesis.speak(u2);
+          }
+        }, 800);
+      }).catch(() => resolve());
     } catch (error) {
       console.error('[speakText] Exception:', error);
       // If anything fails, resolve to avoid blocking the UI
