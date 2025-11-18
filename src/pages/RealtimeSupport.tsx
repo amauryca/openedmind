@@ -9,6 +9,7 @@ import EmergencyModal from "@/components/EmergencyModal";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 import { useRealtimeSupport } from "@/hooks/useRealtimeSupport";
 import SystemStatus from "@/components/SystemStatus";
+import { warmupTTS } from "@/lib/ttsWarmup";
 
 const RealtimeSupport: React.FC = () => {
   const {
@@ -258,7 +259,7 @@ const RealtimeSupport: React.FC = () => {
             {/* Controls */}
             <div className="flex flex-wrap justify-center gap-2 lg:gap-4">
               {!sessionActive ? (
-                <Button onClick={handleStartSession} variant="empathy" size="lg" className="min-w-[180px] lg:min-w-[200px]">
+                <Button onClick={() => { warmupTTS(selectedLanguage); handleStartSession(); }} variant="empathy" size="lg" className="min-w-[180px] lg:min-w-[200px]">
                   <Play className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
                   Start Session
                 </Button>
