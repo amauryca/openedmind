@@ -70,14 +70,14 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-calm': 'var(--gradient-calm)',
-				'gradient-warm': 'var(--gradient-warm)'
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-subtle': 'var(--gradient-subtle)'
 			},
 			boxShadow: {
-				'gentle': 'var(--shadow-gentle)',
-				'therapy': 'var(--shadow-therapy)',
-				'glow': 'var(--shadow-glow)'
+				'sm': 'var(--shadow-sm)',
+				'md': 'var(--shadow-md)',
+				'lg': 'var(--shadow-lg)',
+				'xl': 'var(--shadow-xl)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)',
