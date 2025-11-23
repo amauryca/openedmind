@@ -32,7 +32,7 @@ const NavBar = () => {
             <img 
               src={logo} 
               alt="Opened Mind" 
-              className="h-10 w-auto hover:scale-105 transition-transform duration-300"
+              className="h-10 w-auto hover:scale-105 transition-transform duration-300 dark:invert"
             />
           </div>
           
