@@ -18,10 +18,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    /* Neutral blue accent */
-    --primary: 211 100% 50%;
+    /* Bright blue accent matching favicon */
+    --primary: 206 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 211 100% 65%;
+    --primary-glow: 206 100% 65%;
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 10%;
@@ -37,7 +37,7 @@ All colors MUST be HSL.
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 211 100% 50%;
+    --ring: 206 100% 50%;
 
     /* Apple-style gradients */
     --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
@@ -56,12 +56,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 211 100% 50%;
+    --sidebar-primary: 206 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 94%;
     --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 211 100% 50%;
+    --sidebar-ring: 206 100% 50%;
   }
 
   .dark {
@@ -75,9 +75,9 @@ All colors MUST be HSL.
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 211 100% 55%;
+    --primary: 206 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 211 100% 70%;
+    --primary-glow: 206 100% 70%;
 
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 95%;
@@ -93,7 +93,7 @@ All colors MUST be HSL.
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 211 100% 55%;
+    --ring: 206 100% 55%;
 
     /* Dark gradients */
     --gradient-hero: linear-gradient(180deg, hsl(0 0% 8%) 0%, hsl(0 0% 10%) 100%);
@@ -106,12 +106,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 211 100% 55%;
+    --sidebar-primary: 206 100% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 16%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 211 100% 55%;
+    --sidebar-ring: 206 100% 55%;
   }
 }
 
@@ -122,5 +122,9 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
