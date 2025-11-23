@@ -19,8 +19,8 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const maxScroll = 800;
-      const opacity = Math.min(scrollPosition / maxScroll, 0.5);
+      const maxScroll = 1000;
+      const opacity = Math.min(scrollPosition / maxScroll, 0.4);
       setScrollOpacity(opacity);
     };
 
@@ -30,8 +30,11 @@ const Index = () => {
 
   return <div className="min-h-screen bg-background relative">
       <div 
-        className="fixed inset-0 bg-black pointer-events-none transition-opacity duration-300 z-0"
-        style={{ opacity: scrollOpacity }}
+        className="fixed inset-0 pointer-events-none transition-opacity duration-500 z-0"
+        style={{ 
+          opacity: scrollOpacity,
+          background: 'linear-gradient(to bottom, hsl(var(--primary) / 0.15), hsl(var(--background)) 50%, hsl(var(--primary) / 0.1))'
+        }}
       />
       <div className="relative z-10">
         <NavBar />
