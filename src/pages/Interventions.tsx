@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 import { Helmet } from "react-helmet-async";
-import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target, Filter } from "lucide-react";
+import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target, Filter, Music, Palette, User, Users, Mountain, Coffee, BookOpen, Sparkles, Activity, TrendingUp } from "lucide-react";
 
 const Interventions = () => {
   const canonical = useMemo(() => `${window.location.origin}/interventions`, []);
@@ -291,6 +291,216 @@ const Interventions = () => {
         "Identify any secondary emotions underneath (hurt under anger, fear under sadness)",
         "Ask: 'What does this emotion need right now?' (comfort, action, expression)",
         "Choose one small step to honor what the emotion is telling you"
+      ],
+    },
+    {
+      id: "expressive-writing",
+      title: "Expressive Writing",
+      icon: BookOpen,
+      category: "self-compassion",
+      summary: "Process difficult emotions through free-form journaling.",
+      steps: [
+        "Set a timer for 10-15 minutes",
+        "Write continuously about what's bothering you without stopping or editing",
+        "Don't worry about grammar, spelling, or making sense",
+        "Let your deepest thoughts and feelings flow onto the page",
+        "After writing, notice if you feel any emotional shift or relief"
+      ],
+    },
+    {
+      id: "opposite-action",
+      title: "Opposite Action (DBT)",
+      icon: TrendingUp,
+      category: "behavioral",
+      summary: "Change your mood by acting opposite to your emotional urge.",
+      steps: [
+        "Identify the emotion you're feeling and what it's urging you to do",
+        "Ask: 'Does this emotion fit the facts?' and 'Is acting on it effective?'",
+        "If no, do the opposite: approach when anxious, rest when manic, engage when depressed",
+        "Do it all the way - facial expression, body language, thoughts",
+        "Notice how your mood shifts when you act opposite to the urge"
+      ],
+    },
+    {
+      id: "radical-acceptance",
+      title: "Radical Acceptance",
+      icon: Mountain,
+      category: "thought-work",
+      summary: "Reduce suffering by fully accepting reality as it is, not as you wish it to be.",
+      steps: [
+        "Notice what you're fighting against or denying",
+        "Acknowledge: 'This is the reality right now, whether I like it or not'",
+        "Let go of bitterness and 'shoulds' - reality doesn't care what should be",
+        "Turn your mind toward acceptance each time you notice rejection",
+        "Ask: 'What can I do to move forward from here?'"
+      ],
+    },
+    {
+      id: "anchor-statement",
+      title: "Personal Anchor Statements",
+      icon: Compass,
+      category: "grounding",
+      summary: "Create personalized grounding phrases for intense moments.",
+      steps: [
+        "Write 3-5 short statements that feel true and calming to you",
+        "Examples: 'This feeling will pass,' 'I am safe right now,' 'I've survived this before'",
+        "Keep them on your phone or a card you carry",
+        "During distress, repeat your anchor statements slowly",
+        "Combine with slow breathing or hand on heart"
+      ],
+    },
+    {
+      id: "mindful-music",
+      title: "Mindful Music Listening",
+      icon: Music,
+      category: "self-compassion",
+      summary: "Use music intentionally to shift mood and process emotions.",
+      steps: [
+        "Choose a song that matches your current mood (don't fight it)",
+        "Sit or lie down and listen with full attention - no multitasking",
+        "Notice the layers: vocals, instruments, rhythm, silence between notes",
+        "Then choose a song that reflects the mood you want to move toward",
+        "Let the music carry you through the emotional transition"
+      ],
+    },
+    {
+      id: "art-emotion-release",
+      title: "Art for Emotional Release",
+      icon: Palette,
+      category: "self-compassion",
+      summary: "Express difficult emotions through creative art without judgment.",
+      steps: [
+        "Gather paper and any coloring materials (crayons, markers, paint)",
+        "Without planning, draw or paint your current feeling",
+        "Use colors, shapes, and lines that represent the emotion",
+        "Don't aim for 'good art' - this is purely for release",
+        "When finished, notice if the emotion has shifted or softened"
+      ],
+    },
+    {
+      id: "social-connection-plan",
+      title: "Social Connection Plan",
+      icon: Users,
+      category: "behavioral",
+      summary: "Combat isolation by scheduling meaningful social contact.",
+      steps: [
+        "List 3-5 people who generally lift your mood or feel safe",
+        "Choose one low-pressure way to connect (text, call, coffee)",
+        "Schedule it within the next 3 days - put it in your calendar",
+        "If you feel resistance, start with just 15 minutes",
+        "After connecting, note how you feel compared to before"
+      ],
+    },
+    {
+      id: "physiological-sigh",
+      title: "Physiological Sigh",
+      icon: Wind,
+      category: "breathing",
+      summary: "Rapidly reduce stress with a double-inhale exhale pattern.",
+      steps: [
+        "Inhale deeply through your nose",
+        "Take a second, shorter inhale through your nose (to expand lungs fully)",
+        "Exhale fully and slowly through your mouth",
+        "Repeat 2-3 times",
+        "This quickly offloads CO2 and calms the nervous system in seconds"
+      ],
+    },
+    {
+      id: "cognitive-defusion",
+      title: "Cognitive Defusion",
+      icon: Brain,
+      category: "thought-work",
+      summary: "Separate yourself from unhelpful thoughts by changing how you relate to them.",
+      steps: [
+        "Notice a sticky thought (e.g., 'I'm a failure')",
+        "Add: 'I'm having the thought that...' in front of it",
+        "Then say: 'I notice I'm having the thought that...'",
+        "Visualize the thought as words on a screen, or leaves floating down a stream",
+        "The goal is to watch thoughts without buying into them or fighting them"
+      ],
+    },
+    {
+      id: "micro-breaks",
+      title: "Micro-Breaks Throughout the Day",
+      icon: Coffee,
+      category: "behavioral",
+      summary: "Prevent burnout with intentional 2-5 minute breaks every hour.",
+      steps: [
+        "Set hourly reminders on your phone or computer",
+        "Every hour, stop work and take a 2-5 minute break",
+        "Do something restorative: stretch, breathe, walk, look outside",
+        "Avoid screens during the break if possible",
+        "Notice how these small pauses affect your energy and focus"
+      ],
+    },
+    {
+      id: "imagery-safe-place",
+      title: "Safe Place Imagery",
+      icon: Sparkles,
+      category: "self-compassion",
+      summary: "Create a mental sanctuary you can visit anytime for comfort.",
+      steps: [
+        "Close your eyes and imagine a place where you feel completely safe",
+        "It can be real or imaginary - a beach, forest, room, or fantasy world",
+        "Notice the details: what you see, hear, smell, feel",
+        "Anchor it with a cue word (e.g., 'sanctuary' or 'peace')",
+        "Return to this place whenever you need comfort or grounding"
+      ],
+    },
+    {
+      id: "pros-cons-list",
+      title: "Pros & Cons List (Wise Mind)",
+      icon: ListChecks,
+      category: "thought-work",
+      summary: "Make balanced decisions by weighing emotional and rational pros/cons.",
+      steps: [
+        "Draw a grid with 4 boxes: Pros of action, Cons of action, Pros of not acting, Cons of not acting",
+        "Fill each box honestly without rushing",
+        "Notice both emotional and logical pros/cons",
+        "Review the full picture and ask: 'What does my wise mind say?'",
+        "Decide based on both reason and emotion, not just one"
+      ],
+    },
+    {
+      id: "sensory-box",
+      title: "Sensory Comfort Box",
+      icon: HeartHandshake,
+      category: "grounding",
+      summary: "Keep a collection of comforting sensory items for crisis moments.",
+      steps: [
+        "Gather items for each sense: soft fabric, favorite scent, hard candy, calming image, soothing music",
+        "Keep them in a dedicated box, bag, or drawer",
+        "During distress, engage with 2-3 items slowly and mindfully",
+        "Focus fully on the sensory experience",
+        "This grounds you in the present and soothes the nervous system"
+      ],
+    },
+    {
+      id: "energy-tracking",
+      title: "Energy & Mood Tracking",
+      icon: Activity,
+      category: "behavioral",
+      summary: "Identify patterns by tracking your energy and mood throughout the day.",
+      steps: [
+        "Each day, rate your energy (1-10) and mood (1-10) at morning, afternoon, evening",
+        "Note what you did before each rating (sleep, food, activity, social contact)",
+        "After a week, look for patterns: What lifts your mood? What drains energy?",
+        "Use insights to schedule important tasks during high-energy times",
+        "Adjust daily habits based on what you learn"
+      ],
+    },
+    {
+      id: "self-soothing-touch",
+      title: "Self-Soothing Touch",
+      icon: Heart,
+      category: "self-compassion",
+      summary: "Use gentle physical touch to activate self-compassion and calm.",
+      steps: [
+        "Place one or both hands over your heart",
+        "Feel the warmth and gentle pressure",
+        "Take slow, deep breaths while keeping your hand in place",
+        "Optional: gently stroke your arm, face, or give yourself a hug",
+        "Notice the sense of comfort and safety this creates"
       ],
     },
   ];
