@@ -221,7 +221,7 @@ const Index = () => {
                   onClick={() => navigate("/text-support")} 
                   variant="outline" 
                   size="lg" 
-                  className="w-full rounded-full border-2 hover:bg-accent py-3 text-base transition-all duration-300"
+                  className="w-full rounded-full border-2 hover:bg-accent py-6 text-base transition-all duration-300"
                 >
                   Begin Text Session
                 </Button>
