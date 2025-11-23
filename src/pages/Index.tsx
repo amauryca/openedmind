@@ -23,20 +23,20 @@ const Index = () => {
           style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.05) 0%, transparent 50%)' }}
         />
         <div className="container mx-auto px-6 py-24 md:py-32 relative z-10">
-          <div className="max-w-5xl mx-auto text-center scroll-reveal">
-            <h1 className="text-7xl sm:text-8xl md:text-9xl font-bold tracking-tight text-foreground mb-8 animate-fade-in leading-none">
+          <div className="max-w-5xl mx-auto text-center">
+            <h1 className="text-7xl sm:text-8xl md:text-9xl font-bold tracking-tight text-foreground mb-8 leading-none" style={{ animation: 'fade-in 1s ease-out' }}>
               Opened Mind
             </h1>
             
-            <p className="text-2xl sm:text-3xl md:text-4xl text-muted-foreground mb-12 font-light tracking-tight max-w-4xl mx-auto animate-slide-in leading-tight">
+            <p className="text-2xl sm:text-3xl md:text-4xl text-muted-foreground mb-12 font-light tracking-tight max-w-4xl mx-auto leading-tight" style={{ animation: 'slide-in 1s ease-out 0.2s both' }}>
               Advanced empathetic AI with personalized conversations and emotional intelligence.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-in">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center" style={{ animation: 'slide-in 1s ease-out 0.4s both' }}>
               <Button 
                 onClick={() => navigate("/realtime-support")} 
                 size="lg" 
-                className="text-base px-8 py-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
+                className="text-base px-8 py-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-empathy hover:shadow-glow transition-all duration-500"
               >
                 Start Real-Time Support
               </Button>
@@ -44,7 +44,7 @@ const Index = () => {
                 onClick={() => navigate("/text-support")} 
                 variant="outline" 
                 size="lg" 
-                className="text-base px-8 py-6 rounded-full border-2 hover:bg-accent transition-all duration-300"
+                className="text-base px-8 py-6 rounded-full border-2 border-border hover:bg-accent hover:border-primary/30 transition-all duration-500"
               >
                 Begin Text Support
               </Button>
@@ -65,12 +65,12 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Intelligent Analysis */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Brain className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Brain className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Intelligent Analysis</CardTitle>
               </CardHeader>
@@ -82,10 +82,10 @@ const Index = () => {
             </Card>
 
             {/* Age-Adaptive AI */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0.1s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Heart className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Heart className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Age-Adaptive</CardTitle>
               </CardHeader>
@@ -97,10 +97,10 @@ const Index = () => {
             </Card>
 
             {/* Multilingual Support */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0.2s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Globe className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Globe className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Global Access</CardTitle>
               </CardHeader>
@@ -112,10 +112,10 @@ const Index = () => {
             </Card>
 
             {/* Privacy & Security */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0.3s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Shield className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Shield className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Private & Secure</CardTitle>
               </CardHeader>
@@ -127,10 +127,10 @@ const Index = () => {
             </Card>
 
             {/* Voice Recognition */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0.4s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Mic className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Mic className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Voice Intelligence</CardTitle>
               </CardHeader>
@@ -142,10 +142,10 @@ const Index = () => {
             </Card>
 
             {/* AI Responses */}
-            <Card className="border-0 bg-card hover:shadow-xl transition-all duration-500 group scroll-reveal p-8">
+            <Card className="border border-border/50 bg-card hover:shadow-xl hover:border-primary/20 hover:-translate-y-2 transition-all duration-500 group scroll-reveal p-8" style={{ animationDelay: '0.5s' }}>
               <CardHeader className="text-center p-0 mb-6">
-                <div className="mx-auto mb-6 w-14 h-14 flex items-center justify-center">
-                  <Bot className="h-14 w-14 text-primary" />
+                <div className="mx-auto mb-6 w-16 h-16 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-500">
+                  <Bot className="h-10 w-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Compassionate AI</CardTitle>
               </CardHeader>
@@ -173,29 +173,30 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {/* Real-Time Support Card */}
-            <Card className="border-0 bg-card hover:shadow-2xl transition-all duration-500 scroll-reveal overflow-hidden group">
-              <CardHeader className="text-center pb-6 pt-12">
-                <div className="mx-auto mb-8 w-20 h-20 flex items-center justify-center">
-                  <Video className="h-20 w-20 text-primary group-hover:scale-110 transition-transform duration-500" />
+            <Card className="border border-border/50 bg-card hover:shadow-empathy hover:border-primary/30 hover:-translate-y-1 transition-all duration-500 scroll-reveal overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <CardHeader className="text-center pb-6 pt-12 relative">
+                <div className="mx-auto mb-8 w-24 h-24 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-all duration-500">
+                  <Video className="h-12 w-12 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-3xl font-semibold mb-4">Real-Time Support</CardTitle>
               </CardHeader>
-              <CardContent className="text-center space-y-8 px-8 pb-12">
+              <CardContent className="text-center space-y-8 px-8 pb-12 relative">
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   Experience live facial analysis, voice emotion detection, and real-time AI responses for immersive support.
                 </p>
                 
                 <div className="flex flex-wrap gap-3 justify-center">
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Video Analysis</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Voice Detection</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Live AI</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Text-to-Speech</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Video Analysis</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Voice Detection</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Live AI</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Text-to-Speech</Badge>
                 </div>
 
                 <Button 
                   onClick={() => navigate("/realtime-support")} 
                   size="lg" 
-                  className="w-full mt-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full mt-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base shadow-empathy hover:shadow-glow transition-all duration-500"
                 >
                   Start Real-Time Session
                 </Button>
@@ -203,31 +204,32 @@ const Index = () => {
             </Card>
 
             {/* Text Support Card */}
-            <Card className="border-0 bg-card hover:shadow-2xl transition-all duration-500 scroll-reveal overflow-hidden group">
-              <CardHeader className="text-center pb-6 pt-12">
-                <div className="mx-auto mb-8 w-20 h-20 flex items-center justify-center">
-                  <MessageCircle className="h-20 w-20 text-primary group-hover:scale-110 transition-transform duration-500" />
+            <Card className="border border-border/50 bg-card hover:shadow-empathy hover:border-primary/30 hover:-translate-y-1 transition-all duration-500 scroll-reveal overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <CardHeader className="text-center pb-6 pt-12 relative">
+                <div className="mx-auto mb-8 w-24 h-24 flex items-center justify-center rounded-full bg-primary/5 group-hover:bg-primary/10 transition-all duration-500">
+                  <MessageCircle className="h-12 w-12 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <CardTitle className="text-3xl font-semibold mb-4">Text-Based Session</CardTitle>
               </CardHeader>
-              <CardContent className="text-center px-6 sm:px-8 pb-12">
+              <CardContent className="text-center px-6 sm:px-8 pb-12 relative">
                 <p className="text-muted-foreground text-lg leading-relaxed mb-6">
                   Traditional chat-based support perfect for those who prefer written communication and thoughtful conversations.
                 </p>
                 
                 <div className="flex flex-wrap gap-3 justify-center mb-8">
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Chat Interface</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">AI Analysis</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Written</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Private</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Anonymous</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Chat Interface</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">AI Analysis</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Written</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Private</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2 hover:bg-primary/10 transition-colors duration-300">Anonymous</Badge>
                 </div>
 
                 <Button 
                   onClick={() => navigate("/text-support")} 
                   variant="outline" 
                   size="lg" 
-                  className="w-full rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground py-6 text-base transition-all duration-300"
+                  className="w-full rounded-full border-2 border-border hover:border-primary hover:bg-primary hover:text-primary-foreground py-6 text-base transition-all duration-500"
                 >
                   Begin Text Session
                 </Button>
