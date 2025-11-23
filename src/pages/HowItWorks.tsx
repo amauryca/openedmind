@@ -7,9 +7,11 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { ArrowRight, Shield, Brain, Zap, Lock, Globe, MessageCircle, Mic, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const HowItWorks: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(1);
+  useScrollAnimation();
   
   const requestFlowSteps = [
     {
@@ -80,7 +82,7 @@ const HowItWorks: React.FC = () => {
         </header>
 
         <section className="grid gap-6 md:grid-cols-2 mb-10">
-          <Card className="shadow-empathy hover-scale">
+          <Card className="shadow-empathy hover-scale scroll-reveal">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5 text-primary" />
@@ -97,7 +99,7 @@ const HowItWorks: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-empathy hover-scale">
+          <Card className="shadow-empathy hover-scale scroll-reveal">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="h-5 w-5 text-primary" />
@@ -115,7 +117,7 @@ const HowItWorks: React.FC = () => {
         </section>
 
         <section className="grid gap-6 md:grid-cols-3 mb-12">
-          <Card className="shadow-gentle hover-scale">
+          <Card className="shadow-gentle hover-scale scroll-reveal">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-primary">1</span>
@@ -131,7 +133,7 @@ const HowItWorks: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-          <Card className="shadow-gentle hover-scale">
+          <Card className="shadow-gentle hover-scale scroll-reveal">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-primary">2</span>
@@ -142,7 +144,7 @@ const HowItWorks: React.FC = () => {
               Your inputs are validated and optionally analyzed (voice/face). The Edge Function generates an empathetical, age-adaptive response.
             </CardContent>
           </Card>
-          <Card className="shadow-gentle hover-scale">
+          <Card className="shadow-gentle hover-scale scroll-reveal">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-primary">3</span>
@@ -158,7 +160,7 @@ const HowItWorks: React.FC = () => {
         <section className="mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 text-center">Core Features</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Shield className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Emergency Detection</CardTitle>
@@ -168,7 +170,7 @@ const HowItWorks: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Brain className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Age-Adaptive AI</CardTitle>
@@ -178,7 +180,7 @@ const HowItWorks: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Globe className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>12 Languages</CardTitle>
@@ -188,7 +190,7 @@ const HowItWorks: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Lock className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Privacy First</CardTitle>
@@ -198,7 +200,7 @@ const HowItWorks: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Mic className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Voice Support</CardTitle>
@@ -208,7 +210,7 @@ const HowItWorks: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-empathy hover-scale">
+            <Card className="shadow-empathy hover-scale scroll-reveal">
               <CardHeader>
                 <Zap className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Instant Response</CardTitle>
