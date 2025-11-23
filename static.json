@@ -1,7 +1,0 @@
-{
-  "name": "openedmind",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "serve -s dist -l 8080"
-  }
-}
