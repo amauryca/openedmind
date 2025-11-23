@@ -16,7 +16,7 @@ const Index = () => {
       <NavBar />
 
       {/* Hero Section - Apple Style */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20">
+      <section id="home" className="relative min-h-screen flex items-center justify-center pt-20">
         <div className="container mx-auto px-6 py-24 md:py-32">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-7xl sm:text-8xl md:text-9xl font-bold tracking-tight text-foreground mb-8 animate-fade-in leading-none">
@@ -49,7 +49,7 @@ const Index = () => {
       </section>
 
       {/* Features Section - Apple Style */}
-      <section className="py-32 bg-gradient-subtle">
+      <section id="features" className="py-32 bg-gradient-subtle">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
@@ -155,7 +155,7 @@ const Index = () => {
       </section>
 
       {/* Support Options Section - Apple Style */}
-      <section className="py-32 bg-background">
+      <section id="support" className="py-32 bg-background">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
@@ -214,14 +214,15 @@ const Index = () => {
                   <Badge variant="secondary" className="text-sm px-4 py-2">Chat Interface</Badge>
                   <Badge variant="secondary" className="text-sm px-4 py-2">AI Analysis</Badge>
                   <Badge variant="secondary" className="text-sm px-4 py-2">Written</Badge>
-                  <Badge variant="secondary" className="text-sm px-4 py-2">Secure</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2">Private</Badge>
+                  <Badge variant="secondary" className="text-sm px-4 py-2">Anonymous</Badge>
                 </div>
 
                 <Button 
                   onClick={() => navigate("/text-support")} 
                   variant="outline" 
                   size="lg" 
-                  className="w-full rounded-full border-2 hover:bg-accent py-6 text-base transition-all duration-300"
+                  className="w-full rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground py-6 text-base transition-all duration-300"
                 >
                   Begin Text Session
                 </Button>

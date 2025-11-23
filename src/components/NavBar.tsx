@@ -7,6 +7,19 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <nav className="relative z-50 bg-background/80 backdrop-blur-sm border-b border-border" role="navigation" aria-label="Primary">
       <div className="container mx-auto px-4 py-4">
@@ -39,6 +52,27 @@ const NavBar = () => {
                 <Home className="h-4 w-4 mr-2" />
                 Home
               </Button>
+            )}
+            
+            {location.pathname === "/" && (
+              <>
+                <Button 
+                  onClick={() => scrollToSection("features")}
+                  variant="ghost"
+                  size="sm"
+                  className="hidden lg:flex"
+                >
+                  Features
+                </Button>
+                <Button 
+                  onClick={() => scrollToSection("support")}
+                  variant="ghost"
+                  size="sm"
+                  className="hidden lg:flex"
+                >
+                  Support Options
+                </Button>
+              </>
             )}
             
             <Button 
