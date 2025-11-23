@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react";
 
 const DisclaimerFooter = () => {
   return (
-    <div className="py-8 bg-primary/5">
+    <div className="py-8 bg-muted/30">
       <div className="container mx-auto px-4">
         <Card className="shadow-empathy bg-gradient-warm border-primary/20">
           <CardContent className="p-6 text-center">
