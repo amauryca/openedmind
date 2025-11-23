@@ -205,12 +205,12 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-3xl font-semibold mb-4">Text-Based Session</CardTitle>
               </CardHeader>
-              <CardContent className="text-center space-y-8 px-8 pb-12">
-                <p className="text-muted-foreground text-lg leading-relaxed">
+              <CardContent className="text-center px-6 sm:px-8 pb-12">
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
                   Traditional chat-based support perfect for those who prefer written communication and thoughtful conversations.
                 </p>
                 
-                <div className="flex flex-wrap gap-3 justify-center">
+                <div className="flex flex-wrap gap-3 justify-center mb-8">
                   <Badge variant="secondary" className="text-sm px-4 py-2">Chat Interface</Badge>
                   <Badge variant="secondary" className="text-sm px-4 py-2">AI Analysis</Badge>
                   <Badge variant="secondary" className="text-sm px-4 py-2">Written</Badge>
@@ -221,7 +221,7 @@ const Index = () => {
                   onClick={() => navigate("/text-support")} 
                   variant="outline" 
                   size="lg" 
-                  className="w-full mt-8 rounded-full border-2 hover:bg-accent py-6 text-base transition-all duration-300"
+                  className="w-full rounded-full border-2 hover:bg-accent py-6 text-base transition-all duration-300"
                 >
                   Begin Text Session
                 </Button>
