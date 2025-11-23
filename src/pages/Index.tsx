@@ -18,7 +18,7 @@ const Index = () => {
       {/* Hero Section - Apple Style */}
       <section id="home" className="relative min-h-screen flex items-center justify-center pt-20">
         <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center scroll-reveal">
             <h1 className="text-7xl sm:text-8xl md:text-9xl font-bold tracking-tight text-foreground mb-8 animate-fade-in leading-none">
               Opened Mind
             </h1>
@@ -51,7 +51,7 @@ const Index = () => {
       {/* Features Section - Apple Style */}
       <section id="features" className="py-32 bg-gradient-subtle">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
+          <div className="text-center mb-20 scroll-reveal">
             <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
               Advanced Technology
             </h2>
@@ -157,7 +157,7 @@ const Index = () => {
       {/* Support Options Section - Apple Style */}
       <section id="support" className="py-32 bg-background">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
+          <div className="text-center mb-20 scroll-reveal">
             <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6 tracking-tight">
               Choose Your Experience
             </h2>
