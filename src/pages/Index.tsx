@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,9 +12,29 @@ import NavBar from "@/components/NavBar";
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 const Index = () => {
   const navigate = useNavigate();
+  const [scrollOpacity, setScrollOpacity] = useState(0);
+  
   useScrollAnimation();
-  return <div className="min-h-screen bg-background">
-      <NavBar />
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 800;
+      const opacity = Math.min(scrollPosition / maxScroll, 0.5);
+      setScrollOpacity(opacity);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return <div className="min-h-screen bg-background relative">
+      <div 
+        className="fixed inset-0 bg-black pointer-events-none transition-opacity duration-300 z-0"
+        style={{ opacity: scrollOpacity }}
+      />
+      <div className="relative z-10">
+        <NavBar />
 
       {/* Hero Section - Apple Style */}
       <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gradient-to-b from-primary/10 via-primary/5 to-background">
@@ -266,6 +287,7 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      </div>
     </div>;
 };
 export default Index;
