@@ -33,6 +33,7 @@ const TextSupport = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [sessionEnded, setSessionEnded] = useState(false);
+  const [scrollOpacity, setScrollOpacity] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +63,19 @@ const TextSupport = () => {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  // Track scroll position for gradient effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 500; // Max scroll distance for full darkness
+      const opacity = Math.min(scrollPosition / maxScroll, 0.6); // Cap at 0.6 for darkness
+      setScrollOpacity(opacity);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleStartSession = async () => {
     if (!selectedAge) {
@@ -206,8 +220,13 @@ const TextSupport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-calm">
-      <NavBar />
+    <div className="min-h-screen bg-gradient-calm relative">
+      <div 
+        className="fixed inset-0 bg-black pointer-events-none transition-opacity duration-300 z-0"
+        style={{ opacity: scrollOpacity }}
+      />
+      <div className="relative z-10">
+        <NavBar />
       
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
@@ -471,6 +490,7 @@ const TextSupport = () => {
       <SystemStatus sessionType="text" aiResponding={isTyping} listening={false} />
 
       <DisclaimerFooter />
+      </div>
     </div>
   );
 };
