@@ -16,11 +16,11 @@ const Index = () => {
       <NavBar />
 
       {/* Hero Section - Apple Style */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+      <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gradient-to-b from-primary/10 via-primary/5 to-background">
         {/* Parallax Background */}
         <div 
           className="absolute inset-0 parallax-element pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.05) 0%, transparent 50%)' }}
+          style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, hsl(var(--primary) / 0.2) 0%, transparent 60%)' }}
         />
         <div className="container mx-auto px-6 py-24 md:py-32 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
