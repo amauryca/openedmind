@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Video, MessageCircle, Home, HeartPulse, Menu, BookOpen } from "lucide-react";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
+import logo from "@/assets/logo.png";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -25,20 +26,15 @@ const NavBar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div 
-            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="relative">
             <img 
-              src="/uploads/b956bdcc-9ea9-4d25-9016-b4e126858282.png" 
-              alt="openedmind.org" 
-              className="w-10 h-10 rounded-lg shadow-md hover:scale-110 transition-transform duration-300"
+              src={logo} 
+              alt="Opened Mind" 
+              className="h-10 w-auto hover:scale-105 transition-transform duration-300"
             />
-              <div className="absolute inset-0 bg-gradient-primary rounded-lg opacity-20"></div>
-            </div>
-            <span className="text-xl md:text-2xl font-bold text-foreground">
-              openedmind<span className="text-primary">.org</span>
-            </span>
+            <span className="text-lg md:text-xl font-semibold text-primary">.org</span>
           </div>
           
           <div className="flex space-x-2 md:space-x-4">
