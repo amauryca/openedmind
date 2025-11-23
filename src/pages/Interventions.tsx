@@ -6,10 +6,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import DisclaimerFooter from "@/components/DisclaimerFooter";
 import { Helmet } from "react-helmet-async";
 import { Video, MessageCircle, HeartPulse, Brain, Wind, Footprints, NotebookPen, HeartHandshake, Scan, Waves, Timer, ListChecks, Moon, Quote, StopCircle, Heart, Compass, Clock, Snowflake, Zap, TreePine, Target, Filter, Music, Palette, User, Users, Mountain, Coffee, BookOpen, Sparkles, Activity, TrendingUp } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const Interventions = () => {
   const canonical = useMemo(() => `${window.location.origin}/interventions`, []);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  useScrollAnimation();
 
   const categories = [
     { id: "all", name: "All Interventions", icon: Target },
@@ -588,7 +590,7 @@ const Interventions = () => {
         <section aria-label="Interventions list" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredInterventions.map(({ id, title, icon: Icon, summary, steps }) => (
             <article key={id} id={id} className="scroll-mt-24">
-              <Card className="shadow-empathy animate-fade-in hover-scale">
+              <Card className="shadow-empathy scroll-reveal hover-scale">
                 <CardHeader className="flex flex-row items-center gap-3">
                   <div className="p-2 rounded-md bg-gradient-primary text-white">
                     <Icon className="h-5 w-5" />
