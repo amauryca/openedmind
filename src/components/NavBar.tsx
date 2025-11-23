@@ -26,7 +26,7 @@ const NavBar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div 
-            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
             onClick={() => navigate("/")}
           >
             <img 
@@ -34,7 +34,6 @@ const NavBar = () => {
               alt="Opened Mind" 
               className="h-10 w-auto hover:scale-105 transition-transform duration-300"
             />
-            <span className="text-lg md:text-xl font-semibold text-primary">.org</span>
           </div>
           
           <div className="flex space-x-2 md:space-x-4">
