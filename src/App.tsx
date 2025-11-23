@@ -13,6 +13,7 @@ import HowItWorks from "./pages/HowItWorks";
 import Dedication from "./pages/Dedication";
 import { HelmetProvider } from "react-helmet-async";
 import { FeedbackPopup } from "@/components/FeedbackPopup";
+import { ThemeProvider } from "next-themes";
 
 const queryClient = new QueryClient();
 
@@ -37,16 +38,18 @@ const AppRoutes = () => {
 
 const App = () => (
   <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <FeedbackPopup />
-        <Router basename={import.meta.env.DEV ? "/" : "/"}>
-          <AppRoutes />
-        </Router>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <FeedbackPopup />
+          <Router basename={import.meta.env.DEV ? "/" : "/"}>
+            <AppRoutes />
+          </Router>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   </HelmetProvider>
 );
 
