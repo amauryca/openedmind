@@ -34,8 +34,32 @@ export const SnakeGame = () => {
   const velocityRef = useRef({ x: 1, y: 0 });
   const foodRef = useRef<Position>({ x: 15, y: 15 });
   const gameSpeedRef = useRef(100);
+  const gameLoopRef = useRef<number>();
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
+
+  // Get computed colors from CSS variables
+  const getColor = (variable: string): string => {
+    const root = document.documentElement;
+    const value = getComputedStyle(root).getPropertyValue(variable).trim();
+    // If it's already in hsl format, convert to rgb for canvas
+    if (value.includes(' ')) {
+      const [h, s, l] = value.split(' ').map(v => parseFloat(v));
+      return hslToRgb(h, s, l);
+    }
+    return value;
+  };
+
+  // Convert HSL to RGB for canvas
+  const hslToRgb = (h: number, s: number, l: number): string => {
+    s /= 100;
+    l /= 100;
+    const k = (n: number) => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) =>
+      l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return `rgb(${Math.round(255 * f(0))}, ${Math.round(255 * f(8))}, ${Math.round(255 * f(4))})`;
+  };
 
   // Preload the image
   useEffect(() => {
@@ -57,7 +81,6 @@ export const SnakeGame = () => {
 
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
-    let gameLoop: number;
 
     // Reset game state
     snakeRef.current = [{ x: 10, y: 10 }];
@@ -75,15 +98,17 @@ export const SnakeGame = () => {
       const velocity = velocityRef.current;
       const food = foodRef.current;
 
-      // Clear canvas with gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "hsl(var(--background))");
-      gradient.addColorStop(1, "hsl(var(--primary) / 0.05)");
-      ctx.fillStyle = gradient;
+      // Get colors
+      const bgColor = getColor('--background');
+      const primaryColor = getColor('--primary');
+      const borderColor = getColor('--border');
+
+      // Clear canvas with solid background
+      ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw grid
-      ctx.strokeStyle = "hsl(var(--border) / 0.2)";
+      ctx.strokeStyle = borderColor.replace(')', ', 0.2)').replace('rgb', 'rgba');
       ctx.lineWidth = 0.5;
       for (let i = 0; i <= tileCount; i++) {
         ctx.beginPath();
@@ -122,8 +147,8 @@ export const SnakeGame = () => {
           // Increase speed every 5 points
           if (newScore % 5 === 0 && gameSpeedRef.current > 40) {
             gameSpeedRef.current -= 10;
-            clearInterval(gameLoop);
-            gameLoop = window.setInterval(drawGame, gameSpeedRef.current);
+            if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+            gameLoopRef.current = window.setInterval(drawGame, gameSpeedRef.current);
           }
           // Update high score
           if (newScore > highScore) {
@@ -148,10 +173,10 @@ export const SnakeGame = () => {
           // Head gets special treatment
           if (index === 0) {
             ctx.shadowBlur = 15;
-            ctx.shadowColor = "hsl(var(--primary))";
+            ctx.shadowColor = primaryColor;
           } else {
             ctx.shadowBlur = 8;
-            ctx.shadowColor = "hsl(var(--primary) / 0.5)";
+            ctx.shadowColor = primaryColor.replace(')', ', 0.5)').replace('rgb', 'rgba');
           }
           
           ctx.drawImage(
@@ -167,20 +192,10 @@ export const SnakeGame = () => {
 
       // Draw food with pulsing effect
       const pulseSize = gridSize / 2 - 2 + Math.sin(Date.now() / 200) * 2;
-      const foodGradient = ctx.createRadialGradient(
-        foodRef.current.x * gridSize + gridSize / 2,
-        foodRef.current.y * gridSize + gridSize / 2,
-        0,
-        foodRef.current.x * gridSize + gridSize / 2,
-        foodRef.current.y * gridSize + gridSize / 2,
-        pulseSize
-      );
-      foodGradient.addColorStop(0, "hsl(var(--primary))");
-      foodGradient.addColorStop(1, "hsl(var(--primary) / 0.6)");
       
-      ctx.fillStyle = foodGradient;
+      ctx.fillStyle = primaryColor;
       ctx.shadowBlur = 20;
-      ctx.shadowColor = "hsl(var(--primary))";
+      ctx.shadowColor = primaryColor;
       ctx.beginPath();
       ctx.arc(
         foodRef.current.x * gridSize + gridSize / 2,
@@ -265,13 +280,13 @@ export const SnakeGame = () => {
     window.addEventListener("keydown", handleKeyPress);
     canvas.addEventListener("touchstart", handleTouchStart);
     canvas.addEventListener("touchend", handleTouchEnd);
-    gameLoop = window.setInterval(drawGame, gameSpeedRef.current);
+    gameLoopRef.current = window.setInterval(drawGame, gameSpeedRef.current);
 
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
       canvas.removeEventListener("touchstart", handleTouchStart);
       canvas.removeEventListener("touchend", handleTouchEnd);
-      clearInterval(gameLoop);
+      if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
   }, [gameStarted, isPaused, highScore]);
 
@@ -280,8 +295,7 @@ export const SnakeGame = () => {
     setGameStarted(false);
     
     // Check if score makes it to leaderboard (top 10)
-    const currentScore = score;
-    if (leaderboard.length < 10 || currentScore > leaderboard[leaderboard.length - 1]?.score) {
+    if (leaderboard.length < 10 || score > (leaderboard[leaderboard.length - 1]?.score || 0)) {
       setShowNameEntry(true);
     }
   };
@@ -316,80 +330,80 @@ export const SnakeGame = () => {
   return (
     <div className="flex flex-col lg:flex-row items-start gap-8 mt-8 w-full max-w-6xl mx-auto px-4">
       <div className="flex flex-col items-center gap-4 flex-1">
-      <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">Score:</span>
-            <span className="font-bold text-primary text-lg">{score}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">High Score:</span>
-            <span className="font-bold text-foreground text-lg">{highScore}</span>
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Arrow keys or WASD • Space to pause • Speed increases every 5 points
-        </p>
-      </div>
-      
-      <div className="relative">
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={400}
-          className="border-2 border-primary/30 rounded-lg shadow-lg bg-background"
-        />
-        
-        {isPaused && gameStarted && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
-            <div className="text-center space-y-2">
-              <p className="text-2xl font-bold text-foreground">Paused</p>
-              <p className="text-sm text-muted-foreground">Press Space to continue</p>
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">Score:</span>
+              <span className="font-bold text-primary text-lg">{score}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">High Score:</span>
+              <span className="font-bold text-foreground text-lg">{highScore}</span>
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="flex gap-3">
-        {!gameStarted && !showNameEntry && (
-          <Button onClick={startGame} variant="empathy" size="lg">
-            {gameOver ? `Game Over! Final Score: ${score}` : "Start Game"}
-          </Button>
-        )}
+          <p className="text-xs text-muted-foreground">
+            Arrow keys or WASD • Space to pause • Speed increases every 5 points
+          </p>
+        </div>
         
-        {gameStarted && (
-          <Button 
-            onClick={() => setIsPaused(!isPaused)} 
-            variant="outline" 
-            size="lg"
-          >
-            {isPaused ? "Resume" : "Pause"}
-          </Button>
-        )}
-      </div>
-
-      {showNameEntry && (
-        <Card className="p-6 space-y-4 bg-card">
-          <h3 className="text-xl font-bold text-foreground">🎉 High Score!</h3>
-          <p className="text-muted-foreground">You scored {score} points! Enter your name:</p>
-          <Input
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            placeholder="Your name"
-            maxLength={20}
-            onKeyDown={(e) => e.key === "Enter" && saveToLeaderboard()}
-            className="bg-background"
+        <div className="relative">
+          <canvas
+            ref={canvasRef}
+            width={400}
+            height={400}
+            className="border-2 border-primary/30 rounded-lg shadow-lg bg-background"
           />
-          <div className="flex gap-2">
-            <Button onClick={saveToLeaderboard} variant="empathy" className="flex-1">
-              Save
+          
+          {isPaused && gameStarted && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+              <div className="text-center space-y-2">
+                <p className="text-2xl font-bold text-foreground">Paused</p>
+                <p className="text-sm text-muted-foreground">Press Space to continue</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3">
+          {!gameStarted && !showNameEntry && (
+            <Button onClick={startGame} variant="empathy" size="lg">
+              {gameOver ? `Game Over! Final Score: ${score}` : "Start Game"}
             </Button>
-            <Button onClick={startGame} variant="outline" className="flex-1">
-              Skip
+          )}
+          
+          {gameStarted && (
+            <Button 
+              onClick={() => setIsPaused(!isPaused)} 
+              variant="outline" 
+              size="lg"
+            >
+              {isPaused ? "Resume" : "Pause"}
             </Button>
-          </div>
-        </Card>
-      )}
+          )}
+        </div>
+
+        {showNameEntry && (
+          <Card className="p-6 space-y-4 bg-card">
+            <h3 className="text-xl font-bold text-foreground">🎉 High Score!</h3>
+            <p className="text-muted-foreground">You scored {score} points! Enter your name:</p>
+            <Input
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              placeholder="Your name"
+              maxLength={20}
+              onKeyDown={(e) => e.key === "Enter" && saveToLeaderboard()}
+              className="bg-background"
+            />
+            <div className="flex gap-2">
+              <Button onClick={saveToLeaderboard} variant="empathy" className="flex-1">
+                Save
+              </Button>
+              <Button onClick={startGame} variant="outline" className="flex-1">
+                Skip
+              </Button>
+            </div>
+          </Card>
+        )}
       </div>
 
       {/* Leaderboard */}
