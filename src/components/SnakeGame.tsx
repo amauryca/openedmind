@@ -10,14 +10,20 @@ interface Position {
 export const SnakeGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    return parseInt(localStorage.getItem("snakeHighScore") || "0");
+  });
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const snakeRef = useRef<Position[]>([{ x: 10, y: 10 }]);
   const velocityRef = useRef({ x: 1, y: 0 });
   const foodRef = useRef<Position>({ x: 15, y: 15 });
+  const gameSpeedRef = useRef(100);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    if (!gameStarted) return;
+    if (!gameStarted || isPaused) return;
     
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -32,6 +38,7 @@ export const SnakeGame = () => {
     // Reset game state
     snakeRef.current = [{ x: 10, y: 10 }];
     velocityRef.current = { x: 1, y: 0 };
+    gameSpeedRef.current = 100;
     foodRef.current = {
       x: Math.floor(Math.random() * tileCount),
       y: Math.floor(Math.random() * tileCount),
@@ -44,9 +51,26 @@ export const SnakeGame = () => {
       const velocity = velocityRef.current;
       const food = foodRef.current;
 
-      // Clear canvas
-      ctx.fillStyle = "#0a0a0a";
+      // Clear canvas with gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "hsl(var(--background))");
+      gradient.addColorStop(1, "hsl(var(--primary) / 0.05)");
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw grid
+      ctx.strokeStyle = "hsl(var(--border) / 0.2)";
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i <= tileCount; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(canvas.width, i * gridSize);
+        ctx.stroke();
+      }
 
       // Move snake
       const head = { x: snake[0].x + velocity.x, y: snake[0].y + velocity.y };
@@ -71,7 +95,21 @@ export const SnakeGame = () => {
 
       // Check food collision
       if (head.x === food.x && head.y === food.y) {
-        setScore((prev) => prev + 1);
+        setScore((prev) => {
+          const newScore = prev + 1;
+          // Increase speed every 5 points
+          if (newScore % 5 === 0 && gameSpeedRef.current > 40) {
+            gameSpeedRef.current -= 10;
+            clearInterval(gameLoop);
+            gameLoop = window.setInterval(drawGame, gameSpeedRef.current);
+          }
+          // Update high score
+          if (newScore > highScore) {
+            setHighScore(newScore);
+            localStorage.setItem("snakeHighScore", newScore.toString());
+          }
+          return newScore;
+        });
         foodRef.current = {
           x: Math.floor(Math.random() * tileCount),
           y: Math.floor(Math.random() * tileCount),
@@ -86,8 +124,16 @@ export const SnakeGame = () => {
       
       snakeRef.current.forEach((segment, index) => {
         ctx.save();
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = "#8B5CF6";
+        
+        // Head gets special treatment
+        if (index === 0) {
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "hsl(var(--primary))";
+        } else {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = "hsl(var(--primary) / 0.5)";
+        }
+        
         ctx.drawImage(
           img,
           segment.x * gridSize,
@@ -98,15 +144,27 @@ export const SnakeGame = () => {
         ctx.restore();
       });
 
-      // Draw food
-      ctx.fillStyle = "#F59E0B";
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = "#F59E0B";
+      // Draw food with pulsing effect
+      const pulseSize = gridSize / 2 - 2 + Math.sin(Date.now() / 200) * 2;
+      const foodGradient = ctx.createRadialGradient(
+        foodRef.current.x * gridSize + gridSize / 2,
+        foodRef.current.y * gridSize + gridSize / 2,
+        0,
+        foodRef.current.x * gridSize + gridSize / 2,
+        foodRef.current.y * gridSize + gridSize / 2,
+        pulseSize
+      );
+      foodGradient.addColorStop(0, "hsl(var(--primary))");
+      foodGradient.addColorStop(1, "hsl(var(--primary) / 0.6)");
+      
+      ctx.fillStyle = foodGradient;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = "hsl(var(--primary))";
       ctx.beginPath();
       ctx.arc(
         foodRef.current.x * gridSize + gridSize / 2,
         foodRef.current.y * gridSize + gridSize / 2,
-        gridSize / 2 - 2,
+        pulseSize,
         0,
         Math.PI * 2
       );
@@ -116,61 +174,146 @@ export const SnakeGame = () => {
 
     const handleKeyPress = (e: KeyboardEvent) => {
       const velocity = velocityRef.current;
+      
+      if (e.key === " " || e.key === "Escape") {
+        e.preventDefault();
+        setIsPaused((prev) => !prev);
+        return;
+      }
+      
       switch (e.key) {
         case "ArrowUp":
+        case "w":
+        case "W":
           e.preventDefault();
           if (velocity.y === 0) velocityRef.current = { x: 0, y: -1 };
           break;
         case "ArrowDown":
+        case "s":
+        case "S":
           e.preventDefault();
           if (velocity.y === 0) velocityRef.current = { x: 0, y: 1 };
           break;
         case "ArrowLeft":
+        case "a":
+        case "A":
           e.preventDefault();
           if (velocity.x === 0) velocityRef.current = { x: -1, y: 0 };
           break;
         case "ArrowRight":
+        case "d":
+        case "D":
           e.preventDefault();
           if (velocity.x === 0) velocityRef.current = { x: 1, y: 0 };
           break;
       }
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
+      const velocity = velocityRef.current;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 30 && velocity.x === 0) {
+          velocityRef.current = { x: 1, y: 0 };
+        } else if (deltaX < -30 && velocity.x === 0) {
+          velocityRef.current = { x: -1, y: 0 };
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 30 && velocity.y === 0) {
+          velocityRef.current = { x: 0, y: 1 };
+        } else if (deltaY < -30 && velocity.y === 0) {
+          velocityRef.current = { x: 0, y: -1 };
+        }
+      }
+      
+      touchStartRef.current = null;
+    };
+
     window.addEventListener("keydown", handleKeyPress);
-    gameLoop = window.setInterval(drawGame, 100);
+    canvas.addEventListener("touchstart", handleTouchStart);
+    canvas.addEventListener("touchend", handleTouchEnd);
+    gameLoop = window.setInterval(drawGame, gameSpeedRef.current);
 
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchend", handleTouchEnd);
       clearInterval(gameLoop);
     };
-  }, [gameStarted]);
+  }, [gameStarted, isPaused, highScore]);
 
   const startGame = () => {
     setScore(0);
     setGameOver(false);
     setGameStarted(true);
+    setIsPaused(false);
   };
 
   return (
     <div className="flex flex-col items-center gap-4 mt-8">
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground mb-2">
-          Use arrow keys to play • Score: {score}
+      <div className="text-center space-y-2">
+        <div className="flex items-center justify-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Score:</span>
+            <span className="font-bold text-primary text-lg">{score}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">High Score:</span>
+            <span className="font-bold text-foreground text-lg">{highScore}</span>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Arrow keys or WASD • Space to pause • Speed increases every 5 points
         </p>
       </div>
       
-      <canvas
-        ref={canvasRef}
-        width={400}
-        height={400}
-        className="border-2 border-primary/20 rounded-lg shadow-lg bg-background"
-      />
+      <div className="relative">
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={400}
+          className="border-2 border-primary/30 rounded-lg shadow-lg bg-background"
+        />
+        
+        {isPaused && gameStarted && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+            <div className="text-center space-y-2">
+              <p className="text-2xl font-bold text-foreground">Paused</p>
+              <p className="text-sm text-muted-foreground">Press Space to continue</p>
+            </div>
+          </div>
+        )}
+      </div>
 
-      {!gameStarted && (
-        <Button onClick={startGame} variant="empathy" size="lg">
-          {gameOver ? `Game Over! Play Again (Score: ${score})` : "Start Game"}
-        </Button>
-      )}
+      <div className="flex gap-3">
+        {!gameStarted && (
+          <Button onClick={startGame} variant="empathy" size="lg">
+            {gameOver ? `Game Over! Final Score: ${score}` : "Start Game"}
+          </Button>
+        )}
+        
+        {gameStarted && (
+          <Button 
+            onClick={() => setIsPaused(!isPaused)} 
+            variant="outline" 
+            size="lg"
+          >
+            {isPaused ? "Resume" : "Pause"}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
