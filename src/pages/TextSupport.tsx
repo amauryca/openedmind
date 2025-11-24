@@ -415,7 +415,7 @@ const TextSupport = () => {
                             className={`max-w-[80%] rounded-lg p-4 shadow-gentle animate-slide-in ${
                               message.type === 'user'
                                 ? 'bg-primary text-primary-foreground'
-                                : 'bg-white/90 text-foreground'
+                                : 'bg-card text-card-foreground dark:bg-secondary dark:text-secondary-foreground'
                             }`}
                           >
                             <div className="flex items-center gap-2 mb-2">
