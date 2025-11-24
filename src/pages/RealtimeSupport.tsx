@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -138,6 +138,21 @@ const RealtimeSupport: React.FC = () => {
 
   const currentPhrases = demoPhrases[selectedLanguage] || demoPhrases.english;
 
+  // Scroll-based darkening effect
+  const [scrollOpacity, setScrollOpacity] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 1000;
+      const opacity = Math.min(scrollPosition / maxScroll, 0.4);
+      setScrollOpacity(opacity);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Basic SEO tags for this page
   useEffect(() => {
     document.title = "Real-Time Empathetical Support | openedmind.org";
@@ -154,8 +169,16 @@ const RealtimeSupport: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-calm">
-      <NavBar />
+    <div className="min-h-screen bg-gradient-calm relative">
+      <div 
+        className="fixed inset-0 pointer-events-none transition-opacity duration-500 z-0"
+        style={{ 
+          opacity: scrollOpacity,
+          background: 'linear-gradient(to bottom, hsl(var(--primary) / 0.15), hsl(var(--background)) 50%, hsl(var(--primary) / 0.1))'
+        }}
+      />
+      <div className="relative z-10">
+        <NavBar />
 
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -239,10 +262,24 @@ const RealtimeSupport: React.FC = () => {
                   {/* Real-time Analysis Overlay */}
                   {sessionActive && (
                     <div className="absolute top-2 left-2 lg:top-4 lg:left-4 space-y-1 lg:space-y-2">
-                      <Badge variant="secondary" className="bg-white/90 text-xs lg:text-sm">
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-white/90 text-xs lg:text-sm transition-all duration-300"
+                        style={{ 
+                          opacity: 1 - scrollOpacity * 0.5,
+                          transform: `scale(${1 - scrollOpacity * 0.1})`
+                        }}
+                      >
                         Mood: {currentMood}
                       </Badge>
-                      <Badge variant="secondary" className="bg-white/90 text-xs lg:text-sm">
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-white/90 text-xs lg:text-sm transition-all duration-300"
+                        style={{ 
+                          opacity: 1 - scrollOpacity * 0.5,
+                          transform: `scale(${1 - scrollOpacity * 0.1})`
+                        }}
+                      >
                         Emotion: {emotionLevel}
                       </Badge>
                       {isListening && (
@@ -319,12 +356,22 @@ const RealtimeSupport: React.FC = () => {
                       {conversations.map((m) => (
                         <div
                           key={m.id}
-                          className={`${m.type === "ai" ? "bg-white/80 dark:bg-white/10" : "bg-primary/10 ml-4 lg:ml-8"} rounded-lg p-2 lg:p-3 shadow-gentle animate-fade-in`}
+                          className={`${m.type === "ai" ? "bg-white/80 dark:bg-white/10" : "bg-primary/10 ml-4 lg:ml-8"} rounded-lg p-2 lg:p-3 shadow-gentle animate-fade-in transition-all duration-300`}
+                          style={{
+                            opacity: 1 - scrollOpacity * 0.3
+                          }}
                         >
                           <p className="text-xs lg:text-sm font-semibold text-primary mb-1">
                             {m.type === "ai" ? "🤖 openedmind.org" : "👤 You"}
                           </p>
-                          <p className="text-foreground text-xs lg:text-sm leading-relaxed">{m.content}</p>
+                          <p 
+                            className="text-foreground text-xs lg:text-sm leading-relaxed transition-colors duration-300"
+                            style={{
+                              color: `hsl(var(--foreground) / ${1 - scrollOpacity * 0.4})`
+                            }}
+                          >
+                            {m.content}
+                          </p>
                           <p className="text-xs text-muted-foreground mt-1">{m.timestamp.toLocaleTimeString()}</p>
                         </div>
                       ))}
@@ -429,6 +476,7 @@ const RealtimeSupport: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
       </div>
 
       {/* Emergency Modal */}
