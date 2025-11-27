@@ -70,9 +70,20 @@ export const SnakeGame = () => {
     };
   }, []);
 
+  const gameStartedRef = useRef(false);
+  const isPausedRef = useRef(false);
+
+  // Keep refs in sync with state so the game loop always has current values
   useEffect(() => {
-    if (!gameStarted || isPaused) return;
-    
+    gameStartedRef.current = gameStarted;
+  }, [gameStarted]);
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
+  // Main game loop - runs once on mount
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -82,17 +93,46 @@ export const SnakeGame = () => {
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
 
-    // Reset game state
-    snakeRef.current = [{ x: 10, y: 10 }];
-    velocityRef.current = { x: 1, y: 0 };
-    gameSpeedRef.current = 100;
-    foodRef.current = {
-      x: Math.floor(Math.random() * tileCount),
-      y: Math.floor(Math.random() * tileCount),
+    const resetFood = () => {
+      foodRef.current = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount),
+      };
     };
+
+    // Initialize food position once on mount
+    resetFood();
 
     const drawGame = () => {
       if (!ctx || !canvas) return;
+
+      // If game hasn't started yet, just draw background grid
+      if (!gameStartedRef.current) {
+        const bgColor = getColor('--background');
+        const borderColor = getColor('--border');
+
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = borderColor.replace(')', ', 0.2)').replace('rgb', 'rgba');
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i <= tileCount; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * gridSize, 0);
+          ctx.lineTo(i * gridSize, canvas.height);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * gridSize);
+          ctx.lineTo(canvas.width, i * gridSize);
+          ctx.stroke();
+        }
+        return;
+      }
+
+      // If paused, don't move snake but keep current frame
+      if (isPausedRef.current) {
+        return;
+      }
 
       const snake = snakeRef.current;
       const velocity = velocityRef.current;
@@ -157,10 +197,7 @@ export const SnakeGame = () => {
           }
           return newScore;
         });
-        foodRef.current = {
-          x: Math.floor(Math.random() * tileCount),
-          y: Math.floor(Math.random() * tileCount),
-        };
+        resetFood();
       } else {
         snakeRef.current.pop();
       }
@@ -169,7 +206,7 @@ export const SnakeGame = () => {
       if (imageRef.current) {
         snakeRef.current.forEach((segment, index) => {
           ctx.save();
-          
+
           // Head gets special treatment
           if (index === 0) {
             ctx.shadowBlur = 15;
@@ -178,7 +215,7 @@ export const SnakeGame = () => {
             ctx.shadowBlur = 8;
             ctx.shadowColor = primaryColor.replace(')', ', 0.5)').replace('rgb', 'rgba');
           }
-          
+
           ctx.drawImage(
             imageRef.current!,
             segment.x * gridSize,
@@ -192,7 +229,7 @@ export const SnakeGame = () => {
 
       // Draw food with pulsing effect
       const pulseSize = gridSize / 2 - 2 + Math.sin(Date.now() / 200) * 2;
-      
+
       ctx.fillStyle = primaryColor;
       ctx.shadowBlur = 20;
       ctx.shadowColor = primaryColor;
@@ -208,15 +245,27 @@ export const SnakeGame = () => {
       ctx.shadowBlur = 0;
     };
 
+    gameLoopRef.current = window.setInterval(drawGame, gameSpeedRef.current);
+
+    return () => {
+      if (gameLoopRef.current) clearInterval(gameLoopRef.current);
+    };
+  }, []);
+
+  // Keyboard and touch controls
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const handleKeyPress = (e: KeyboardEvent) => {
       const velocity = velocityRef.current;
-      
+
       if (e.key === " " || e.key === "Escape") {
         e.preventDefault();
         setIsPaused((prev) => !prev);
         return;
       }
-      
+
       switch (e.key) {
         case "ArrowUp":
         case "w":
@@ -252,12 +301,12 @@ export const SnakeGame = () => {
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (!touchStartRef.current) return;
-      
+
       const touch = e.changedTouches[0];
       const deltaX = touch.clientX - touchStartRef.current.x;
       const deltaY = touch.clientY - touchStartRef.current.y;
       const velocity = velocityRef.current;
-      
+
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
         if (deltaX > 30 && velocity.x === 0) {
@@ -273,22 +322,20 @@ export const SnakeGame = () => {
           velocityRef.current = { x: 0, y: -1 };
         }
       }
-      
+
       touchStartRef.current = null;
     };
 
     window.addEventListener("keydown", handleKeyPress);
     canvas.addEventListener("touchstart", handleTouchStart);
     canvas.addEventListener("touchend", handleTouchEnd);
-    gameLoopRef.current = window.setInterval(drawGame, gameSpeedRef.current);
 
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
       canvas.removeEventListener("touchstart", handleTouchStart);
       canvas.removeEventListener("touchend", handleTouchEnd);
-      if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, [gameStarted, isPaused, highScore]);
+  }, []);
 
   const handleGameOver = () => {
     setGameOver(true);
@@ -320,13 +367,22 @@ export const SnakeGame = () => {
   };
 
   const startGame = () => {
+    const tileCount = 20; // 400px canvas / 20px gridSize
+
+    snakeRef.current = [{ x: 10, y: 10 }];
+    velocityRef.current = { x: 1, y: 0 };
+    gameSpeedRef.current = 100;
+    foodRef.current = {
+      x: Math.floor(Math.random() * tileCount),
+      y: Math.floor(Math.random() * tileCount),
+    };
+
     setScore(0);
     setGameOver(false);
     setGameStarted(true);
     setIsPaused(false);
     setShowNameEntry(false);
   };
-
   return (
     <div className="flex flex-col lg:flex-row items-start gap-8 mt-8 w-full max-w-6xl mx-auto px-4">
       <div className="flex flex-col items-center gap-4 flex-1">
