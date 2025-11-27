@@ -70,20 +70,10 @@ export const SnakeGame = () => {
     };
   }, []);
 
-  const gameStartedRef = useRef(false);
-  const isPausedRef = useRef(false);
-
-  // Keep refs in sync with state so the game loop always has current values
+  // Main game loop
   useEffect(() => {
-    gameStartedRef.current = gameStarted;
-  }, [gameStarted]);
+    if (!gameStarted || isPaused) return;
 
-  useEffect(() => {
-    isPausedRef.current = isPaused;
-  }, [isPaused]);
-
-  // Main game loop - runs once on mount
-  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -93,46 +83,8 @@ export const SnakeGame = () => {
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
 
-    const resetFood = () => {
-      foodRef.current = {
-        x: Math.floor(Math.random() * tileCount),
-        y: Math.floor(Math.random() * tileCount),
-      };
-    };
-
-    // Initialize food position once on mount
-    resetFood();
-
     const drawGame = () => {
       if (!ctx || !canvas) return;
-
-      // If game hasn't started yet, just draw background grid
-      if (!gameStartedRef.current) {
-        const bgColor = getColor('--background');
-        const borderColor = getColor('--border');
-
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.strokeStyle = borderColor.replace(')', ', 0.2)').replace('rgb', 'rgba');
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i <= tileCount; i++) {
-          ctx.beginPath();
-          ctx.moveTo(i * gridSize, 0);
-          ctx.lineTo(i * gridSize, canvas.height);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(0, i * gridSize);
-          ctx.lineTo(canvas.width, i * gridSize);
-          ctx.stroke();
-        }
-        return;
-      }
-
-      // If paused, don't move snake but keep current frame
-      if (isPausedRef.current) {
-        return;
-      }
 
       const snake = snakeRef.current;
       const velocity = velocityRef.current;
@@ -197,7 +149,10 @@ export const SnakeGame = () => {
           }
           return newScore;
         });
-        resetFood();
+        foodRef.current = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount),
+        };
       } else {
         snakeRef.current.pop();
       }
@@ -250,92 +205,7 @@ export const SnakeGame = () => {
     return () => {
       if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     };
-  }, []);
-
-  // Keyboard and touch controls
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const handleKeyPress = (e: KeyboardEvent) => {
-      const velocity = velocityRef.current;
-
-      if (e.key === " " || e.key === "Escape") {
-        e.preventDefault();
-        setIsPaused((prev) => !prev);
-        return;
-      }
-
-      switch (e.key) {
-        case "ArrowUp":
-        case "w":
-        case "W":
-          e.preventDefault();
-          if (velocity.y === 0) velocityRef.current = { x: 0, y: -1 };
-          break;
-        case "ArrowDown":
-        case "s":
-        case "S":
-          e.preventDefault();
-          if (velocity.y === 0) velocityRef.current = { x: 0, y: 1 };
-          break;
-        case "ArrowLeft":
-        case "a":
-        case "A":
-          e.preventDefault();
-          if (velocity.x === 0) velocityRef.current = { x: -1, y: 0 };
-          break;
-        case "ArrowRight":
-        case "d":
-        case "D":
-          e.preventDefault();
-          if (velocity.x === 0) velocityRef.current = { x: 1, y: 0 };
-          break;
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!touchStartRef.current) return;
-
-      const touch = e.changedTouches[0];
-      const deltaX = touch.clientX - touchStartRef.current.x;
-      const deltaY = touch.clientY - touchStartRef.current.y;
-      const velocity = velocityRef.current;
-
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        // Horizontal swipe
-        if (deltaX > 30 && velocity.x === 0) {
-          velocityRef.current = { x: 1, y: 0 };
-        } else if (deltaX < -30 && velocity.x === 0) {
-          velocityRef.current = { x: -1, y: 0 };
-        }
-      } else {
-        // Vertical swipe
-        if (deltaY > 30 && velocity.y === 0) {
-          velocityRef.current = { x: 0, y: 1 };
-        } else if (deltaY < -30 && velocity.y === 0) {
-          velocityRef.current = { x: 0, y: -1 };
-        }
-      }
-
-      touchStartRef.current = null;
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    canvas.addEventListener("touchstart", handleTouchStart);
-    canvas.addEventListener("touchend", handleTouchEnd);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-      canvas.removeEventListener("touchstart", handleTouchStart);
-      canvas.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, []);
+  }, [gameStarted, isPaused, highScore]);
 
   const handleGameOver = () => {
     setGameOver(true);
