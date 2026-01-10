@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Video, MessageCircle, Home, HeartPulse, Menu, BookOpen } from "lucide-react";
+import { Video, MessageCircle, Home, HeartPulse, Menu, BookOpen, Phone } from "lucide-react";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import logo from "@/assets/logo.png";
 
@@ -114,6 +114,17 @@ const NavBar = () => {
               <span className="sm:hidden">Tools</span>
             </Button>
 
+            <Button 
+              onClick={() => navigate("/resources")}
+              variant={location.pathname === "/resources" ? "default" : "outline"}
+              size="sm"
+              className="hidden lg:inline-flex text-xs md:text-sm"
+            >
+              <Phone className="h-4 w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Resources</span>
+              <span className="sm:hidden">Help</span>
+            </Button>
+
             <Sheet>
               <SheetTrigger asChild>
                 <Button aria-label="Open menu" variant="outline" size="icon" className="lg:hidden">
@@ -148,6 +159,11 @@ const NavBar = () => {
                   <SheetClose asChild>
                     <Button variant={location.pathname === "/how-it-works" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/how-it-works")}>
                       <BookOpen className="h-4 w-4 mr-2" /> How it works
+                    </Button>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Button variant={location.pathname === "/resources" ? "default" : "ghost"} className="justify-start" onClick={() => navigate("/resources")}>
+                      <Phone className="h-4 w-4 mr-2" /> Resources
                     </Button>
                   </SheetClose>
                 </div>

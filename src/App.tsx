@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Interventions from "./pages/Interventions";
 import HowItWorks from "./pages/HowItWorks";
 import Dedication from "./pages/Dedication";
+import Resources from "./pages/Resources";
 import { HelmetProvider } from "react-helmet-async";
 import { FeedbackPopup } from "@/components/FeedbackPopup";
 import { ThemeProvider } from "next-themes";
@@ -29,6 +30,7 @@ const AppRoutes = () => {
         <Route path="/interventions" element={<Interventions />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/dedication" element={<Dedication />} />
+        <Route path="/resources" element={<Resources />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
