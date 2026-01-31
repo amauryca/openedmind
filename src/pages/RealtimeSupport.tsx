@@ -396,8 +396,25 @@ const RealtimeSupport: React.FC = () => {
                       )}
                     </div>
                   ) : (
-                    <div className="text-center text-muted-foreground py-8">
-                      <p>Start a session to begin your empathetical conversation</p>
+                    <div className="text-center text-muted-foreground py-4 space-y-3">
+                      <p className="font-medium">Start a session to access:</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                        <div className="bg-white/50 dark:bg-white/5 rounded-lg p-2">
+                          <span className="text-lg">🎤</span>
+                          <p className="mt-1">Voice Analysis</p>
+                          <p className="text-muted-foreground/70">Real-time speech recognition</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-white/5 rounded-lg p-2">
+                          <span className="text-lg">📹</span>
+                          <p className="mt-1">Facial Recognition</p>
+                          <p className="text-muted-foreground/70">Emotion detection via camera</p>
+                        </div>
+                        <div className="bg-white/50 dark:bg-white/5 rounded-lg p-2">
+                          <span className="text-lg">🤖</span>
+                          <p className="mt-1">AI Support</p>
+                          <p className="text-muted-foreground/70">Personalized responses</p>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -434,18 +451,30 @@ const RealtimeSupport: React.FC = () => {
                 <CardTitle className="text-xl">Session Insights</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-gradient-warm rounded-lg">
-                    <h3 className="font-semibold text-sm text-muted-foreground">AI Understanding</h3>
-                    <p className="text-lg font-bold text-primary">{currentMood}</p>
+                {sessionActive ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-gradient-warm rounded-lg">
+                      <h3 className="font-semibold text-sm text-muted-foreground">AI Understanding</h3>
+                      <p className="text-lg font-bold text-primary">{currentMood}</p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-warm rounded-lg">
+                      <h3 className="font-semibold text-sm text-muted-foreground">Response Quality</h3>
+                      <p className="text-lg font-bold text-primary">{emotionLevel}</p>
+                    </div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-warm rounded-lg">
-                    <h3 className="font-semibold text-sm text-muted-foreground">Response Quality</h3>
-                    <p className="text-lg font-bold text-primary">{emotionLevel}</p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <span className="text-2xl">🧠</span>
+                      <h3 className="font-semibold text-sm mt-2">AI Understanding</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Mood & emotion detection</p>
+                    </div>
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <span className="text-2xl">📊</span>
+                      <h3 className="font-semibold text-sm mt-2">Response Quality</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Personalized feedback</p>
+                    </div>
                   </div>
-                </div>
-                {!sessionActive && (
-                  <p className="text-sm text-muted-foreground text-center py-4">Start a session to see AI insights</p>
                 )}
               </CardContent>
             </Card>
