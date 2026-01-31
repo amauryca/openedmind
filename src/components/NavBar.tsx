@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Video, MessageCircle, Home, HeartPulse, Menu, BookOpen, Phone } from "lucide-react";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.ico";
 
 const NavBar = () => {
   const navigate = useNavigate();
