@@ -97,91 +97,187 @@ export class WebSpeechAPI {
   }
 }
 
-// 2. MediaPipe Face Detection (Google - Free)
+// 2. MediaPipe Face Landmark Detection for Emotion Analysis (Google - Free)
 export class MediaPipeFaceEmotion {
-  private faceDetector: any = null;
+  private faceLandmarker: any = null;
+  private isInitialized = false;
   
   async initialize() {
+    if (this.isInitialized) return true;
+    
     try {
-      // Dynamic import to avoid bundle size issues
       const mediapipe = await import('@mediapipe/tasks-vision');
-      const { FaceDetector, FilesetResolver } = mediapipe;
+      const { FaceLandmarker, FilesetResolver } = mediapipe;
       
       const vision = await FilesetResolver.forVisionTasks(
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm'
       );
       
-      this.faceDetector = await FaceDetector.createFromModelPath(
-        vision,
-        'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite'
-      );
+      this.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task',
+          delegate: 'GPU'
+        },
+        runningMode: 'VIDEO',
+        numFaces: 1,
+        outputFaceBlendshapes: true // This gives us emotion-related data
+      });
       
+      this.isInitialized = true;
+      console.log('[MediaPipe] Face Landmarker initialized successfully');
       return true;
     } catch (error) {
-      console.error('Failed to initialize MediaPipe:', error);
+      console.error('[MediaPipe] Failed to initialize:', error);
       return false;
     }
   }
   
   async detectEmotion(videoElement: HTMLVideoElement): Promise<{ emotion: string; confidence: number }> {
-    // Skip MediaPipe detection for now to avoid errors
-    // Just return a neutral emotion to keep the flow working
     try {
-      // Check if video is actually playing and has valid dimensions
       if (!videoElement || videoElement.videoWidth === 0 || videoElement.videoHeight === 0) {
-        return { emotion: 'neutral', confidence: 0.5 };
+        return { emotion: 'waiting', confidence: 0 };
       }
       
-      // Simple fallback emotion simulation
-      const emotions = ['happy', 'neutral', 'focused', 'calm', 'engaged'];
-      const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
-      const confidence = Math.random() * 0.3 + 0.6; // 60-90% confidence
+      if (!this.faceLandmarker || !this.isInitialized) {
+        return { emotion: 'initializing', confidence: 0 };
+      }
       
-      return { emotion: randomEmotion, confidence };
+      const timestamp = performance.now();
+      const results = this.faceLandmarker.detectForVideo(videoElement, timestamp);
+      
+      if (!results?.faceBlendshapes?.length) {
+        return { emotion: 'no face detected', confidence: 0 };
+      }
+      
+      // Extract blendshapes for emotion analysis
+      const blendshapes = results.faceBlendshapes[0].categories;
+      const getScore = (name: string): number => {
+        const shape = blendshapes.find((b: any) => b.categoryName === name);
+        return shape?.score || 0;
+      };
+      
+      // Analyze facial expressions using blendshapes
+      const mouthSmileLeft = getScore('mouthSmileLeft');
+      const mouthSmileRight = getScore('mouthSmileRight');
+      const browDownLeft = getScore('browDownLeft');
+      const browDownRight = getScore('browDownRight');
+      const browInnerUp = getScore('browInnerUp');
+      const eyeSquintLeft = getScore('eyeSquintLeft');
+      const eyeSquintRight = getScore('eyeSquintRight');
+      const mouthFrownLeft = getScore('mouthFrownLeft');
+      const mouthFrownRight = getScore('mouthFrownRight');
+      const jawOpen = getScore('jawOpen');
+      const eyeWideLeft = getScore('eyeWideLeft');
+      const eyeWideRight = getScore('eyeWideRight');
+      
+      // Calculate emotion scores
+      const smileScore = (mouthSmileLeft + mouthSmileRight) / 2;
+      const frownScore = (mouthFrownLeft + mouthFrownRight) / 2;
+      const browScore = (browDownLeft + browDownRight) / 2;
+      const squintScore = (eyeSquintLeft + eyeSquintRight) / 2;
+      const wideEyeScore = (eyeWideLeft + eyeWideRight) / 2;
+      
+      // Determine dominant emotion based on facial features
+      const emotions: { emotion: string; score: number }[] = [
+        { emotion: 'happy', score: smileScore * 1.5 + squintScore * 0.5 },
+        { emotion: 'sad', score: frownScore + browInnerUp * 0.5 },
+        { emotion: 'angry', score: browScore + frownScore * 0.5 },
+        { emotion: 'surprised', score: wideEyeScore + browInnerUp + jawOpen * 0.3 },
+        { emotion: 'focused', score: browScore * 0.5 + squintScore * 0.3 },
+        { emotion: 'neutral', score: 0.15 } // baseline for neutral
+      ];
+      
+      // Find dominant emotion
+      emotions.sort((a, b) => b.score - a.score);
+      const dominant = emotions[0];
+      
+      // Calculate confidence (normalized)
+      const confidence = Math.min(1, Math.max(0.1, dominant.score));
+      
+      return { 
+        emotion: dominant.emotion, 
+        confidence: Math.round(confidence * 100) / 100 
+      };
     } catch (error) {
-      console.error('Emotion detection failed:', error);
-      return { emotion: 'neutral', confidence: 0.0 };
+      console.error('[MediaPipe] Emotion detection failed:', error);
+      return { emotion: 'error', confidence: 0 };
     }
   }
 }
 
-// 3. Voice Emotion Analysis (Simple frequency analysis - Free)
+// 3. Voice Emotion Analysis (Frequency-based analysis - Free)
 export class VoiceEmotionAnalyzer {
   private audioContext: AudioContext | null = null;
   private analyzer: AnalyserNode | null = null;
+  private source: MediaStreamAudioSourceNode | null = null;
+  private isConnected = false;
   
   async initialize() {
     try {
       this.audioContext = new AudioContext();
       this.analyzer = this.audioContext.createAnalyser();
-      this.analyzer.fftSize = 256;
+      this.analyzer.fftSize = 512;
+      this.analyzer.smoothingTimeConstant = 0.8;
       return true;
     } catch (error) {
-      console.error('Failed to initialize voice analyzer:', error);
+      console.error('[VoiceAnalyzer] Failed to initialize:', error);
       return false;
     }
   }
   
   async analyzeVoiceTone(stream: MediaStream): Promise<{ emotion: string; energy: number }> {
     if (!this.audioContext || !this.analyzer) {
-      throw new Error('Voice analyzer not initialized');
+      return { emotion: 'not ready', energy: 0 };
     }
     
-    const source = this.audioContext.createMediaStreamSource(stream);
-    source.connect(this.analyzer);
+    // Connect source only once
+    if (!this.isConnected) {
+      try {
+        this.source = this.audioContext.createMediaStreamSource(stream);
+        this.source.connect(this.analyzer);
+        this.isConnected = true;
+      } catch (error) {
+        console.error('[VoiceAnalyzer] Failed to connect stream:', error);
+        return { emotion: 'error', energy: 0 };
+      }
+    }
     
     const dataArray = new Uint8Array(this.analyzer.frequencyBinCount);
     this.analyzer.getByteFrequencyData(dataArray);
     
-    // Simple analysis based on frequency data
-    const energy = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+    // Calculate energy levels in different frequency bands
+    const lowFreq = dataArray.slice(0, 32).reduce((a, b) => a + b, 0) / 32; // Bass
+    const midFreq = dataArray.slice(32, 128).reduce((a, b) => a + b, 0) / 96; // Mid
+    const highFreq = dataArray.slice(128, 256).reduce((a, b) => a + b, 0) / 128; // Treble
+    const totalEnergy = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
     
+    // Determine vocal characteristics based on frequency distribution
     let emotion = 'calm';
-    if (energy > 100) emotion = 'excited';
-    else if (energy > 70) emotion = 'engaged';
-    else if (energy < 30) emotion = 'quiet';
     
-    return { emotion, energy: energy / 255 };
+    if (totalEnergy < 10) {
+      emotion = 'silent';
+    } else if (totalEnergy > 80) {
+      if (highFreq > midFreq) {
+        emotion = 'excited';
+      } else {
+        emotion = 'intense';
+      }
+    } else if (totalEnergy > 50) {
+      if (midFreq > highFreq && midFreq > lowFreq) {
+        emotion = 'engaged';
+      } else {
+        emotion = 'active';
+      }
+    } else if (totalEnergy > 20) {
+      emotion = 'speaking';
+    } else {
+      emotion = 'quiet';
+    }
+    
+    return { 
+      emotion, 
+      energy: Math.round((totalEnergy / 255) * 100) / 100 
+    };
   }
 }
 

@@ -253,6 +253,84 @@ export const SnakeGame = () => {
     setIsPaused(false);
     setShowNameEntry(false);
   };
+  // Keyboard controls
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!gameStarted) return;
+
+      const vel = velocityRef.current;
+
+      switch (e.key) {
+        case "ArrowUp":
+        case "w":
+        case "W":
+          if (vel.y !== 1) velocityRef.current = { x: 0, y: -1 };
+          e.preventDefault();
+          break;
+        case "ArrowDown":
+        case "s":
+        case "S":
+          if (vel.y !== -1) velocityRef.current = { x: 0, y: 1 };
+          e.preventDefault();
+          break;
+        case "ArrowLeft":
+        case "a":
+        case "A":
+          if (vel.x !== 1) velocityRef.current = { x: -1, y: 0 };
+          e.preventDefault();
+          break;
+        case "ArrowRight":
+        case "d":
+        case "D":
+          if (vel.x !== -1) velocityRef.current = { x: 1, y: 0 };
+          e.preventDefault();
+          break;
+        case " ":
+          setIsPaused((p) => !p);
+          e.preventDefault();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [gameStarted]);
+
+  // Touch controls
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartRef.current || !gameStarted) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = touch.clientY - touchStartRef.current.y;
+      const vel = velocityRef.current;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 30 && vel.x !== -1) velocityRef.current = { x: 1, y: 0 };
+        else if (dx < -30 && vel.x !== 1) velocityRef.current = { x: -1, y: 0 };
+      } else {
+        if (dy > 30 && vel.y !== -1) velocityRef.current = { x: 0, y: 1 };
+        else if (dy < -30 && vel.y !== 1) velocityRef.current = { x: 0, y: -1 };
+      }
+      touchStartRef.current = null;
+    };
+
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [gameStarted]);
+
   return (
     <div className="flex flex-col lg:flex-row items-start gap-8 mt-8 w-full max-w-6xl mx-auto px-4">
       <div className="flex flex-col items-center gap-4 flex-1">

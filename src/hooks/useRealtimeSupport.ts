@@ -307,8 +307,10 @@ export const useRealtimeSupport = (): UseRealtimeSupportReturn => {
           addLog("Speech synthesis failed: " + se?.message);
         }
 
-        // mood update
-        updateMoodFromText(input);
+        // Only update mood from text if face detection isn't providing data
+        if (!faceDetectionRef.current) {
+          updateMoodFromText(input);
+        }
       } catch (err: any) {
         addLog("Error generating AI: " + err?.message);
         const fallback: ConversationMessage = {

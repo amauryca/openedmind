@@ -454,25 +454,43 @@ const RealtimeSupport: React.FC = () => {
                 {sessionActive ? (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-gradient-warm rounded-lg">
-                      <h3 className="font-semibold text-sm text-muted-foreground">AI Understanding</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground">Detected Mood</h3>
                       <p className="text-lg font-bold text-primary">{currentMood}</p>
                     </div>
                     <div className="text-center p-4 bg-gradient-warm rounded-lg">
-                      <h3 className="font-semibold text-sm text-muted-foreground">Response Quality</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground">Emotional State</h3>
                       <p className="text-lg font-bold text-primary">{emotionLevel}</p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-warm rounded-lg">
+                      <h3 className="font-semibold text-sm text-muted-foreground">Messages Exchanged</h3>
+                      <p className="text-lg font-bold text-primary">{conversations.length}</p>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-warm rounded-lg">
+                      <h3 className="font-semibold text-sm text-muted-foreground">Your Messages</h3>
+                      <p className="text-lg font-bold text-primary">{conversations.filter(m => m.type === 'user').length}</p>
                     </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
                       <span className="text-2xl">🧠</span>
-                      <h3 className="font-semibold text-sm mt-2">AI Understanding</h3>
-                      <p className="text-xs text-muted-foreground mt-1">Mood & emotion detection</p>
+                      <h3 className="font-semibold text-sm mt-2">Mood Detection</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Real-time facial analysis</p>
+                    </div>
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <span className="text-2xl">💓</span>
+                      <h3 className="font-semibold text-sm mt-2">Emotional State</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Voice tone analysis</p>
+                    </div>
+                    <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
+                      <span className="text-2xl">💬</span>
+                      <h3 className="font-semibold text-sm mt-2">Messages</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Conversation tracking</p>
                     </div>
                     <div className="text-center p-4 bg-white/50 dark:bg-white/5 rounded-lg">
                       <span className="text-2xl">📊</span>
-                      <h3 className="font-semibold text-sm mt-2">Response Quality</h3>
-                      <p className="text-xs text-muted-foreground mt-1">Personalized feedback</p>
+                      <h3 className="font-semibold text-sm mt-2">Insights</h3>
+                      <p className="text-xs text-muted-foreground mt-1">Session statistics</p>
                     </div>
                   </div>
                 )}
